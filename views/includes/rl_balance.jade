@@ -15,13 +15,16 @@
         - count = count + 1
         - var itemFixed = item.balance / 100000000
         - var percentage = (itemFixed / stats.supply) * 100
-        tr
-          td(style='text-align:center;') 
-            =count
-          td 
-            a(href='/address/#{item.a_id}') #{item.a_id}
-            include ./rl_labels.jade
-          td.hidden-xs
-            =itemFixed.toFixed(8)
-          td.hidden-xs(style='text-align:center;') 
-            =percentage.toFixed(2)
+        - if (count < 52)
+          tr
+            td(style='text-align:center;') 
+              - if (count > 1)
+                =count - 1
+            td 
+              a(href='/address/#{item.a_id}') #{item.a_id}
+              include ./rl_labels.jade
+            td.hidden-xs
+              =itemFixed.toFixed(8)
+            td.hidden-xs(style='text-align:center;') 
+              - if (percentage <= 100)
+                =percentage.toFixed(2)
