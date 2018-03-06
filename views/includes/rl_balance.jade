@@ -12,7 +12,7 @@
     tbody
       - var count = 0
       each item in balance
-        - count = count + 2
+        - count = count + 1
         - var itemFixed = item.balance / 100000000
         - var percentage = (itemFixed / stats.supply) * 100
         - if (count < 53)
