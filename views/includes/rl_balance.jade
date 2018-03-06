@@ -26,5 +26,6 @@
             td.hidden-xs
               =itemFixed.toFixed(8)
             td.hidden-xs(style='text-align:center;')
-              - if (percentage <= 100)
-                =percentage.toFixed(2)
+              - if (count > 2)
+                - if (percentage <= 100)
+                  =percentage.toFixed(2)
