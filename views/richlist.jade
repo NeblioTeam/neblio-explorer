@@ -1,6 +1,6 @@
 extends layout
 
-block content   
+block content
   script.
     $(document).ready(function(){
       var data = [
@@ -15,7 +15,7 @@ block content
             rendererOptions: {
               diameter: 260,
               padding: 0,
-              sliceMargin: 4, 
+              sliceMargin: 4,
               // Put data labels on the pie slices.
               // By default, labels show the percentage of the slice.
               showDataLabels: false,
@@ -33,9 +33,9 @@ block content
         }
       );
     });
-    $(window).resize(function () { 
+    $(window).resize(function () {
       pieWealthDist.replot( { resetAxes: false } );
-    });  
+    });
   .col-xs-12.col-md-8
     .tabpanel
       ul.nav.nav-tabs(role='tablist')
@@ -44,7 +44,7 @@ block content
         li(role='presentation')
           a(href='#received', aria-controls='received', role='tab', data-toggle='tab') Received
     .tab-content
-      #balance.tabpanel.tab-pane.active 
+      #balance.tabpanel.tab-pane.active
         include ./includes/rl_balance.jade
       #received.tabpanel.tab-pane
         include ./includes/rl_received.jade
@@ -87,8 +87,8 @@ block content
             tr
               th
                 span #{settings.locale.total}
-              td 
-              td.text-center #{(100 - parseFloat(distd.percent)).toFixed(2)}
+              td
+              td.text-center #{(parseFloat(dista.percent) + parseFloat(distb.percent) + parseFloat(distc.percent) + parseFloat(distd.percent)).toFixed(2)}
       center
         div#pieChart(style="width:300px;height:305px;margin:0px;")
   .row.footer-margin
