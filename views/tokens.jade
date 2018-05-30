@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  .col-xs-12.col-md-10.col-md-offset-1
+    .panel.panel-default
+      .panel-heading(style='padding-left:25px;padding-right:25px;')       
+        strong #{settings.locale.tokens}         
+      table.table.table-bordered.summary-table 
+        thead
+          tr
+            th #{settings.locale.name}
+            th #{settings.locale.id}
+            th #{settings.locale.tk_total_supply}
+        tbody
+          each t in tokens
+            tr
+              td
+                a(href='/token/#{t.t_id}') #{t.name}
+              td
+                a(href='/token/#{t.t_id}') #{t.t_id}
+              td.text-center #{t.total_supply.toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+
+    .footer-padding  
