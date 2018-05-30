@@ -11,6 +11,7 @@
     "menu_richlist": "Top 50",
     "menu_reward": "Reward",
     "menu_movement": "Movement",
+    "menu_token": "Tokens",
     "menu_node": "Nodes",
     "menu_network": "Network",
 
@@ -45,6 +46,8 @@
     "difficulty": "Difficulty",
     "network": "Network",
     "height": "Height",
+    "token": "Token",
+    "tokens": "Tokens",
     "timestamp": "Timestamp",
     "size": "Size",
     "transactions": "Transactions",

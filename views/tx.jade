@@ -63,7 +63,7 @@ block content
                   th #{settings.locale.tx_address}
                   if (tx.vin.length > 0)
                     if tx.vin[0].addresses != 'coinbase'
-                      th.hidden-xs #{settings.locale.mkt_amount} (#{settings.symbol})
+                      th.hidden-sm #{settings.locale.mkt_amount}
               tbody
                 if tx.vin.length > 0
                   each r in tx.vin
@@ -76,7 +76,11 @@ block content
                         td 
                           a.loading(href='/address/#{r.addresses}') 
                             =r.addresses
-                        td.danger.hidden-xs #{ramount.toFixed(8)}
+                        td.danger.hidden-sm #{ramount.toFixed(8)} #{settings.symbol}
+                          if (tx.has_token && r.tokens)
+                            br
+                            each t in r.tokens
+                              | #{(-1) * t.amount} #{display_token_name(t)}
                       tr.hidden-lg.hidden-md
                           td.danger #{ramount.toFixed(8)} #{settings.symbol}
                 else
@@ -90,7 +94,7 @@ block content
               thead
                 tr
                   th #{settings.locale.tx_address}
-                  th.hidden-xs #{settings.locale.mkt_amount} (#{settings.symbol})
+                  th.hidden-sm #{settings.locale.mkt_amount}
               tbody
                 each r in tx.vout
                   if tx.vout.length > 0 
@@ -99,15 +103,23 @@ block content
                       td 
                         a.loading(href='/address/#{r.addresses}') 
                           =r.addresses 
-                      td.success.hidden-xs  #{ramount.toFixed(8)}
+                      td.success.hidden-sm  #{ramount.toFixed(8)} #{settings.symbol}
+                        if (tx.has_token && r.tokens)
+                            br
+                            each t in r.tokens
+                              | #{t.amount} #{display_token_name(t)}
                     tr.hidden-lg.hidden-md
                       td.success #{ramount.toFixed(8)} #{settings.symbol}
+                        if (tx.has_token && r.tokens)
+                          br
+                          each t in r.tokens
+                            | #{t.amount} #{display_token_name(t)}
                   else
                     tr
                       td 
                         a.loading(href='/address/#{r.addresses}') 
                           =r.addresses 
-                      td.success.hidden-xs  #{ramount.toFixed(8)}
+                      td.success.hidden-sm  #{ramount.toFixed(8)}
                     tr.hidden-lg.hidden-md
                       td.success #{ramount.toFixed(8)} #{settings.symbol} 
     .footer-padding
