@@ -208,7 +208,7 @@ html
             li.pull-left
               a#googleplus-icon(href="https://plus.google.com/#{settings.googleplus}", target='_blank')
                 span.glyphicon.fa.fa-google-plus
-        if settings.testnet
+        if settings.network == 'testnet'
           ul.nav.navbar-nav
             li.pull-left
                 a.navbar-link(href='https://explorer.nebl.io') Mainnet Explorer
