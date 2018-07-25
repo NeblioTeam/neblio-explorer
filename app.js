@@ -117,6 +117,7 @@ app.set('twitter', settings.twitter);
 app.set('genesis_block', settings.genesis_block);
 app.set('index', settings.index);
 app.set('heavy', settings.heavy);
+app.set('network', settings.network);
 app.set('txcount', settings.txcount);
 app.set('nethash', settings.nethash);
 app.set('nethash_units', settings.nethash_units);
