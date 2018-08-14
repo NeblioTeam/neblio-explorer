@@ -80,6 +80,7 @@ html
       - var time = date + suffix + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
       - return time
     -  };
+    - var display_token_name = function(token) { if (!token.name || '' == token.name) { name = ''; if (token.t_id && token.t_id.length > 20) { name = token.t_id; } else if (token.id && token.id.length > 20) { name = token.id; } if ('' != name) { return name.substr(0,6).concat('...', name.substr((name.length - 4),4)); } } return token.name; }
     .nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
       .container-fluid
         .navbar-header
@@ -103,8 +104,13 @@ html
             if settings.display.movement == true
               li#movement
                 a.navbar-link.loading(href='/movement')
-                  span.fa.fa-money
+                  span.fa.fa-exchange
                   span.menu-text #{settings.locale.menu_movement}
+            if settings.display.token == true
+              li#token
+                a.navbar-link(href='/token')
+                  span.fa.fa-ticket
+                  span.menu-text #{settings.locale.menu_token}
             if settings.display.network == true
               li#network
                 a.navbar-link(href='/network')
@@ -113,7 +119,7 @@ html
             if settings.display.richlist == true
               li#richlist
                 a.navbar-link(href='/richlist')
-                  span.fa.fa-btc
+                  span.fa.fa-university
                   span.menu-text #{settings.locale.menu_richlist}
             if settings.display.markets == true
               li#markets

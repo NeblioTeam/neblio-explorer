@@ -215,6 +215,21 @@ router.get('/reward', function(req, res){
   //});
 });
 
+router.get('/token', function(req, res){
+  db.get_tokens(function (tokens) {
+    res.render('tokens', { tokens: tokens });
+  });
+});
+
+// Not implemented yet => redirect to token list
+router.get('/token/:tokenId', function(req, res) {
+  // route_get_token(res, req.param('tokenId'));
+  db.get_tokens(function (tokens) {
+    res.render('tokens', { tokens: tokens });
+  });
+});
+
+
 router.get('/tx/:txid', function(req, res) {
   route_get_tx(res, req.param('txid'));
 });

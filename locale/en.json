@@ -11,6 +11,7 @@
     "menu_richlist": "Top 50",
     "menu_reward": "Reward",
     "menu_movement": "Movement",
+    "menu_token": "Tokens",
     "menu_node": "Nodes",
     "menu_network": "Network",
 
@@ -23,7 +24,7 @@
     "ex_search_error": "Search found no results for: ",
     "ex_latest_transactions": "Latest Transactions",
     "ex_summary": "Block Summary",
-    "ex_supply": "Token Supply",
+    "ex_supply": "Coin Supply",
     "ex_block": "Block",
 
     // transaction view
@@ -45,6 +46,10 @@
     "difficulty": "Difficulty",
     "network": "Network",
     "height": "Height",
+    "token": "Token",
+    "tokens": "Tokens",
+    "name": "Name",
+    "id": "Id",
     "timestamp": "Timestamp",
     "size": "Size",
     "transactions": "Transactions",
@@ -101,6 +106,9 @@
     "api_getsupply": "Returns the current money supply.",
     "api_getnextrewardestimate": "Returns an estimate for the next block reward based on the current state of decentralized voting.",
     "api_getnextrewardwhenstr": "Returns string describing how long until the votes are tallied and the next block reward is computed.",
+
+    // Tokens
+    "tk_total_supply": "Total supply",
 
     // Markets view
     "mkt_hours": "24 hours",
