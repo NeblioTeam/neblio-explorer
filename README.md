@@ -3,13 +3,14 @@ Iquidus Explorer - 1.6.1
 
 An open source block explorer written in node.js.
 
+
 ### See it in action
 
 *  [Jumbucks](http://explorer.getjumbucks.com)
 *  [Sphere](http://sphere.iquidus.io)
 *  [SAR](http://explorer.sarcoin.info)
 *  [Vanillacoin](https://blockchain.vanillacoin.net/)
-*  [Neoscoin](http://explorer.infernopool.com/)  
+*  [Neoscoin](http://explorer.infernopool.com/)
 *  [C2Chain](http://c2chain.info/)
 
 *note: If you would like your instance mentioned here contact me*
@@ -135,10 +136,27 @@ Where [SIZE] is an integer higher than the default.
 
 *note: SIZE will depend on which blockchain you are using, you may need to play around a bit to find an optimal setting*
 
+### Optimize mongo indexes
+
+db.txes.dropIndexes()
+db.txes.createIndex({blockindex:1})
+db.txes.createIndex({blockhash:1})
+db.txes.createIndex({timestamp:1})
+db.txes.createIndex({txid:1})
+db.txes.reIndex()
+db.addresses.dropIndexes()
+db.addresses.createIndex({received:1})
+db.addresses.createIndex({balance:1})
+db.addresses.createIndex({a_id:1})
+db.addresses.reIndex()
+db.tokens.dropIndexes()
+db.tokens.createIndex({t_id:1})
+db.tokens.reIndex()
+
 ### License
 
-Copyright (c) 2015, Iquidus Technology  
-Copyright (c) 2015, Luke Williams  
+Copyright (c) 2015, Iquidus Technology
+Copyright (c) 2015, Luke Williams
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
