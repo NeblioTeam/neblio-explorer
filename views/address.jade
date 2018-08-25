@@ -39,6 +39,18 @@ block content
               if settings.show_sent_received == true
                 td #{received.toFixed(8)}
               td #{balance.toFixed(8)}
+        thead
+          tr
+            if address.a_id !== 'coinbase'
+              th #{settings.locale.rl_balance}(s) (NTP1)
+        tbody
+          tr
+            if address.a_id !== 'coinbase'
+             td 
+               each t in address.tokens
+                 if t.amount > 0
+                   | #[img.image(src='#{display_token_icon(t)}' height="20px")] #[a(href='/token/#{t.id}') #{display_token_name(t)}] - #{t.amount}
+                   br
     .panel.panel-default.hidden-xs
       .panel-heading
         strong #{settings.locale.ex_latest_transactions}

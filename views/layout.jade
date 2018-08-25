@@ -5,7 +5,8 @@ html
     link(rel='stylesheet', href='/themes/#{settings.theme}/bootstrap.min.css')
     link(rel='stylesheet', href='/vendor/jqplot/jquery.jqplot.css')
     link(rel='stylesheet', href='//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.css')
-    link(rel='stylesheet', href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')
+    //link(rel='stylesheet', href='//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css')
+    link(rel='stylesheet', href='https://use.fontawesome.com/releases/v5.2.0/css/all.css', integrity='sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ', crossorigin='anonymous')
     link(rel='stylesheet', href='/stylesheets/style.css')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
     script(src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
@@ -80,7 +81,8 @@ html
       - var time = date + suffix + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
       - return time
     -  };
-    - var display_token_name = function(token) { if (!token.name || '' == token.name) { name = ''; if (token.t_id && token.t_id.length > 20) { name = token.t_id; } else if (token.id && token.id.length > 20) { name = token.id; } if ('' != name) { return name.substr(0,6).concat('...', name.substr((name.length - 4),4)); } } return token.name; }
+    - var display_token_name = function(token) {if(token.meta_of_issuance && token.meta_of_issuance.data && token.meta_of_issuance.data.tokenName) {return token.meta_of_issuance.data.tokenName} else {if (!token.meta || '' == token.meta) { name = ''; if (token.t_id && token.t_id.length > 20) { name = token.t_id; } else if (token.id && token.id.length > 20) { name = token.id; } if ('' != name) { return name.substr(0,6).concat('...', name.substr((name.length - 4),4)); } } return token.meta.tokenName; }}
+    - var display_token_icon = function(token) {if(token.meta_of_issuance && token.meta_of_issuance.data && token.meta_of_issuance.data.urls && token.meta_of_issuance.data.urls[0] && token.meta_of_issuance.data.urls[0].url){return token.meta_of_issuance.data.urls[0].url} else {if (token.meta && token.meta.urls && token.meta.urls[0] && token.meta.urls[0].url) {return token.meta.urls[0].url} else {return 'https://ntp1-icons.ams3.digitaloceanspaces.com/orion.png'}}}
     .nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
       .container-fluid
         .navbar-header
@@ -104,12 +106,12 @@ html
             if settings.display.movement == true
               li#movement
                 a.navbar-link.loading(href='/movement')
-                  span.fa.fa-exchange
+                  span.fas.fa-exchange-alt
                   span.menu-text #{settings.locale.menu_movement}
             if settings.display.token == true
               li#token
                 a.navbar-link(href='/token')
-                  span.fa.fa-ticket
+                  span.fas.fa-coins
                   span.menu-text #{settings.locale.menu_token}
             if settings.display.network == true
               li#network
@@ -203,7 +205,7 @@ html
           ul.nav.navbar-nav
             li.pull-left
               a#twitter-icon(href="https://twitter.com/#{settings.twitter}", target='_blank')
-                span.glyphicon.fa.fa-twitter
+                span.glyphicon.fab.fa-twitter
         if settings.display.facebook
           ul.nav.navbar-nav
             li.pull-left

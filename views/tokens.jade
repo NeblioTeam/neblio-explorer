@@ -9,13 +9,17 @@ block content
         thead
           tr
             th #{settings.locale.name}
-            th #{settings.locale.id}
+            th #{settings.locale.tk_description}
+            th #{settings.locale.tk_issuer}
+            th #{settings.locale.tk_id}
             th #{settings.locale.tk_total_supply}
         tbody
           each t in tokens
             tr
-              td
-                a(href='/token/#{t.t_id}') #{t.name}
+              td 
+                #[img.image(src='#{display_token_icon(t)}' height="20px")] #[a(href='/token/#{t.t_id}') #{t.meta_of_issuance.data.tokenName}]
+              td #{t.meta_of_issuance.data.description}
+              td #{t.meta_of_issuance.data.issuer}
               td
                 a(href='/token/#{t.t_id}') #{t.t_id}
               td.text-center #{t.total_supply.toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}

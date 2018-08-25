@@ -121,6 +121,16 @@ function route_get_address(res, hash, count) {
   });
 }
 
+function route_get_token(res, tokenId) {
+  db.get_token(tokenId, function(token) {
+    if (token) {
+      res.render('token', {active: 'token', token: token});
+    } else {
+      route_get_index(res, tokenId + ' not found');
+    }
+  });
+}
+
 /* GET home page. */
 router.get('/', function(req, res) {
   route_get_index(res, null);
@@ -221,14 +231,9 @@ router.get('/token', function(req, res){
   });
 });
 
-// Not implemented yet => redirect to token list
 router.get('/token/:tokenId', function(req, res) {
-  // route_get_token(res, req.param('tokenId'));
-  db.get_tokens(function (tokens) {
-    res.render('tokens', { tokens: tokens });
-  });
+  route_get_token(res, req.param('tokenId'));
 });
-
 
 router.get('/tx/:txid', function(req, res) {
   route_get_tx(res, req.param('txid'));

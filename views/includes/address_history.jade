@@ -2,6 +2,7 @@ thead
   tr
     th.hidden-xs #{settings.locale.timestamp}
     th.hidden-xs #{settings.locale.tx_hash}
+    th #{settings.locale.tokens}
     th #{settings.locale.mkt_amount} (#{settings.symbol})
 tbody
   each tx in txs
@@ -16,6 +17,9 @@ tbody
       each r in tx.vout 
         if r.addresses == address.a_id
           - out = r.amount
+      td.text-center
+       if tx.has_token
+         <span class='fas fa-coins'></span>
       each s in tx.vin
         if s.addresses == address.a_id
           - vin = s.amount

@@ -46,7 +46,7 @@ block content
               var amount = json.data[i]['total'] / 100000000;
               json.data[i]['total'] = amount.toFixed(8);
               if (json.data[i]['has_token']) {
-                json.data[i]['token'] = "<span class='fa fa-ticket'></span>";
+                json.data[i]['token'] = "<span class='fas fa-coins'></span>";
               } else {
                 json.data[i]['token'] = "";
               }
@@ -91,7 +91,7 @@ block content
             th.hidden-xs.text-center #{settings.locale.tx_hash}
             th.hidden-xs.text-center #{settings.locale.tx_recipients}
             th.text-center #{settings.locale.mkt_amount} (#{settings.symbol})
-            th.text-center #{settings.locale.token}
+            th.text-center #{settings.locale.tokens}
             th.text-center #{settings.locale.timestamp}
         tbody.text-center
     .footer-padding

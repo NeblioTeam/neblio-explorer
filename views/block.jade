@@ -82,6 +82,7 @@ block content
             tr
               th.hidden-xs #{settings.locale.tx_hash}
               th #{settings.locale.tx_recipients}
+              th #{settings.locale.tokens}
               th #{settings.locale.mkt_amount} (#{settings.symbol})
               th
           tbody
@@ -90,6 +91,9 @@ block content
                 td.hidden-xs
                   a(href='/tx/#{txn.txid}') #{txn.txid}
                 td #{txn.vout.length}
+                td.text-center
+                  if txn.has_token
+                    <span class='fas fa-coins'></span>
                 if txn.vout.length > 0
                   - var total = txn.total / 100000000
                   td #{total.toFixed(8)}
