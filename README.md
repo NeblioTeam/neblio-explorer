@@ -152,6 +152,9 @@ db.addresses.reIndex()
 db.tokens.dropIndexes()
 db.tokens.createIndex({t_id:1})
 db.tokens.reIndex()
+db.peers.dropIndexes()
+db.peers.createIndex({"createdAt":1},{expireAfterSeconds:86400})
+db.peers.reIndex()
 
 ### License
 
