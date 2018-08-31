@@ -80,7 +80,8 @@ block content
                           if (tx.has_token && r.tokens)
                             br
                             each t in r.tokens
-                              | #{(-1) * t.amount} #[a(href='/token/#{t.id}') #{display_token_name(t)}] #[img.image(src='#{display_token_icon(t)}' height="20px")] br
+                              | #{(-1) * t.amount} #[a(href='/token/#{t.id}') #{display_token_name(t)}] #[img.image(src='#{display_token_icon(t)}' height="20px")]
+                              br
                       tr.hidden-lg.hidden-md
                           td.danger #{ramount.toFixed(8)} #{settings.symbol}
                 else
@@ -108,12 +109,14 @@ block content
                             br
                             each t in r.tokens
                               | #{t.amount} #[a(href='/token/#{t.id}') #{display_token_name(t)}] #[img.image(src='#{display_token_icon(t)}' height="20px")]
+                              br
                     tr.hidden-lg.hidden-md
                       td.success #{ramount.toFixed(8)} #{settings.symbol}
                         if (tx.has_token && r.tokens)
                           br
                           each t in r.tokens
                             | #{t.amount} #[a(href='/token/#{t.id}') #{display_token_name(t)}] #[img.image(src='#{display_token_icon(t)}' height="20px")]
+                            br
                   else
                     tr
                       td
