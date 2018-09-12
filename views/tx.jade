@@ -79,7 +79,8 @@ block content
                         td.danger.hidden-sm #{ramount.toFixed(8)} #{settings.symbol}
                           if (tx.has_token && r.tokens)
                             br
-                            each t in r.tokens
+                            - var sorted_tokens = sort_tokens(r.tokens)
+                            each t in sorted_tokens
                               | #{(-1) * t.amount} #[a(href='/token/#{t.id}') #{display_token_name(t)}] #[img.image(src='#{display_token_icon(t)}' height="20px")]
                               br
                       tr.hidden-lg.hidden-md
@@ -107,14 +108,16 @@ block content
                       td.success.hidden-sm  #{ramount.toFixed(8)} #{settings.symbol}
                         if (tx.has_token && r.tokens)
                             br
-                            each t in r.tokens
+                            - var sorted_tokens = sort_tokens(r.tokens)
+                            each t in sorted_tokens
                               | #{t.amount} #[a(href='/token/#{t.id}') #{display_token_name(t)}] #[img.image(src='#{display_token_icon(t)}' height="20px")]
                               br
                     tr.hidden-lg.hidden-md
                       td.success #{ramount.toFixed(8)} #{settings.symbol}
                         if (tx.has_token && r.tokens)
                           br
-                          each t in r.tokens
+                          - var sorted_tokens = sort_tokens(r.tokens)
+                          each t in sorted_tokens
                             | #{t.amount} #[a(href='/token/#{t.id}') #{display_token_name(t)}] #[img.image(src='#{display_token_icon(t)}' height="20px")]
                             br
                   else

@@ -47,7 +47,8 @@ block content
           tr
             if address.a_id !== 'coinbase'
              td 
-               each t in address.tokens
+               - var sorted_tokens = sort_tokens(address.tokens)
+               each t in sorted_tokens
                  if t.amount > 0
                    | #[img.image(src='#{display_token_icon(t)}' height="20px")] #[a(href='/token/#{t.id}') #{display_token_name(t)}] - #{t.amount}
                    br
