@@ -39,7 +39,7 @@ block content
                     | #[a(href='/tx/#{token.issuance_txid}') #{token.issuance_txid}]
                 tr
                   td
-                    strong Metadata of Issuance:
+                    strong Metadata of Issuance: 
                     if token.meta_of_issuance.data.userData.meta.length > 0
                       each d in token.meta_of_issuance.data.userData.meta
                         <br>
