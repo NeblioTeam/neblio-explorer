@@ -3,76 +3,80 @@ extends layout
 block content
   .col-xs-12.col-md-10.col-md-offset-1
     .panel.panel-default.panel-address-summary
-      .panel-heading(style='position:relative;')        
+      .panel-heading(style='position:relative;')
         strong #[img.image(src='#{display_token_icon(token)}' height="20px")] #{display_token_name(token)}
-      table.table.table-bordered.table-striped.summary-table 
+      table.table.table-bordered.table-striped.summary-table
         thead
           th Token Info
           th Token Icon
         tbody
           tr
-            td             
+            td
               table.table.table-bordered.table-striped.summary-table
                 tr
-                  td 
-                    strong Token ID: 
+                  td
+                    strong Token ID:
                     | #{token.t_id}
                 tr
                   td
-                    strong Issuer: 
+                    strong Issuer:
                     | #{token.meta_of_issuance.data.issuer}
                 tr
                   td
-                    strong Total Token Supply: 
+                    strong Total Token Supply:
                     | #{token.total_supply}
                 tr
                   td
-                    strong Description: 
+                    strong Description:
                     | #{token.meta_of_issuance.data.description}
                 tr
                   td
-                    strong Issuance Address: 
+                    strong Issuance Address:
                     | #[a(href='/address/#{token.issuance_address}') #{token.issuance_address}]
                 tr
                   td
-                    strong Issuance Txid: 
+                    strong Issuance Txid:
                     | #[a(href='/tx/#{token.issuance_txid}') #{token.issuance_txid}]
                 tr
                   td
-                    strong Issuance Block Height: 
+                    strong Metadata of Issuance:
+                    | #{token.meta_of_issuance}
+                tr
+                  td
+                    strong Issuance Block Height:
                     | #{token.first_block}
                 tr
                   td
-                    strong Locked: (No more tokens can be issued) 
+                    strong Locked: (No more tokens can be issued)
                     | #{token.lock_status}
                 tr
                   td
-                    strong Divisibility: 
+                    strong Divisibility:
                     | #{token.divisibility}
                 tr
                   td
-                    strong Aggregation Policy: 
+                    strong Aggregation Policy:
                     | #{token.aggregation_policy}
                 tr
                   td
-                    strong Number of Issuances: 
+                    strong Number of Issuances:
                     | #{token.num_issuance}
                 tr
                   td
-                    strong Number of Burns: 
+                    strong Number of Burns:
                     | #{token.num_burns}
                 tr
                   td
-                    strong Number of Token Holders: 
+                    strong Number of Token Holders:
                     | #{token.num_holders}
                 tr
                   td
-                    strong Number of Transactions: 
+                    strong Number of Transactions:
                     | #{token.num_transfers}
             td(style="vertical-align:middle;")
               center
                 #[img.image(src='#{display_token_icon(token)}' height="200px")]
-      
+
     br
     .footer-padding
-            
+
