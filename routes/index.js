@@ -317,19 +317,29 @@ router.get('/ext/summary', function(req, res) {
     lib.get_hashrate(function(hashrate) {
       lib.get_connectioncount(function(connections){
         lib.get_blockcount(function(blockcount) {
-          db.get_stats(settings.coin, function (stats) {
-            if (hashrate == 'There was an error. Check your console.') {
-              hashrate = 0;
-            }
-            res.send({ data: [{
-              difficulty: difficulty,
-              difficultyHybrid: difficultyHybrid,
-              supply: stats.supply,
-              hashrate: hashrate,
-              lastPrice: stats.last_price,
-              connections: connections,
-              blockcount: blockcount
-            }]});
+          lib.get_blockhash(blockcount, function(hash1) {
+          	lib.get_block(hash1, function(block1) {
+              lib.get_blockhash(blockcount-2880, function(hash2) {
+              	lib.get_block(hash2, function(block2) {
+              	  var blocktime = (block1.time - block2.time)/2880;
+                  db.get_stats(settings.coin, function (stats) {
+                    if (hashrate == 'There was an error. Check your console.') {
+                      hashrate = 0;
+                    }
+                    res.send({ data: [{
+                      difficulty: difficulty,
+                      difficultyHybrid: difficultyHybrid,
+                      supply: stats.supply,
+                      hashrate: hashrate,
+                      lastPrice: stats.last_price,
+                      connections: connections,
+                      blockcount: blockcount,
+                      blocktime: blocktime
+                    }]});
+                  });
+                });
+              });
+            });
           });
         });
       });
