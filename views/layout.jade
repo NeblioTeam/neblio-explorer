@@ -34,7 +34,7 @@ html
             $("#lastPrice").text(json.data[0].lastPrice.toFixed(8));
             $("#lblConnections").text(json.data[0].connections + ' connections');
             $("#lblBlockcount").text(json.data[0].blockcount + ' blocks');
-            $("#blocktime").text(json.data[0].blocktime.toFixed(2) + blocks/s);
+            $("#blocktime").text(json.data[0].blocktime.toFixed(2) + seconds);
             $("#lblX1").text(' ');
           }});
         }
