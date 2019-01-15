@@ -31,8 +31,8 @@ html
             $("#difficulty").text(json.data[0].difficulty);
             $("#difficultyHybrid").text(json.data[0].difficultyHybrid);
             $("#hashrate").text(json.data[0].hashrate);
-            $("#lastPriceBTC").text(json.data[0].lastPriceBTC.toFixed(8) + 'BTC');
-            $("#lastPriceUSD").text('$' + json.data[0].lastPriceUSD.toFixed(2));
+            $("#lastPriceBTC").text(json.data[0].lastPriceBTC.toFixed(8) + ' BTC');
+            $("#lastPriceUSD").text('$' + json.data[0].lastPriceUSD.toFixed(2) + ' -- ');
             $("#lblConnections").text(json.data[0].connections + ' connections');
             $("#lblBlockcount").text(json.data[0].blockcount + ' blocks');
             $("#blocktime").text(json.data[0].blocktime.toFixed(2) + ' seconds');
@@ -179,9 +179,9 @@ html
                <br>
                label#lblX1
               else
-               label#lastPriceBTC -
-               <br>
                label#lastPriceUSD -
+               label#lastPriceBTC -
+
 
 
       .row.text-center(style='margin-top:10px;margin-bottom:20px;')
