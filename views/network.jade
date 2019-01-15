@@ -1,10 +1,11 @@
 extends layout
 
-block content   
+block content
   script.
     $(document).ready(function(){
-      var ctable = $('#connections-table').dataTable( {  
-        autoWidth: true,      
+      var ctable = $('#connections-table').dataTable( {
+        lengthMenu: [100, 250, 500, 1000],
+        autoWidth: true,
         searching: false,
         ordering: false,
         responsive: true,
