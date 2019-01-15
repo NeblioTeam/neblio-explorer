@@ -31,7 +31,8 @@ html
             $("#difficulty").text(json.data[0].difficulty);
             $("#difficultyHybrid").text(json.data[0].difficultyHybrid);
             $("#hashrate").text(json.data[0].hashrate);
-            $("#lastPrice").text(json.data[0].lastPrice.toFixed(8));
+            $("#lastPriceBTC").text(json.data[0].lastPriceBTC.toFixed(8) + 'BTC');
+            $("#lastPriceUSD").text('$' + json.data[0].lastPriceUSD.toFixed(2));
             $("#lblConnections").text(json.data[0].connections + ' connections');
             $("#lblBlockcount").text(json.data[0].blockcount + ' blocks');
             $("#blocktime").text(json.data[0].blocktime.toFixed(2) + ' seconds');
@@ -171,14 +172,17 @@ html
         .col-md-2
           .panel.panel-default.hidden-sm.hidden-xs
             .panel-heading
-              strong #{settings.markets.exchange} Price
+              strong NEBL Price
             .panel-body
               if settings.index.difficulty == 'Hybrid'
                label#lastPrice -
                <br>
                label#lblX1
               else
-               label#lastPrice -
+               label#lastPriceBTC -
+               <br>
+               label#lastPriceUSD -
+
 
       .row.text-center(style='margin-top:10px;margin-bottom:20px;')
         form.form-inline(method='post', action='/search')
