@@ -1,15 +1,17 @@
 #!/bin/bash
 
-SCRIPT=$(readlink -f "$0")
-SCRIPTPATH=$(dirname "$SCRIPT")
-
-file="$SCRIPTPATH/../tmp/index.pid"
+file="$PWD/tmp/index.pid"
 if [ -f $file ]
+then
+  if ! [ -s $file ]
   then
-   name=$(cat "$file")
-
-  if [ -z "${kpid}" -a -d "/proc/${kpid}" ]
+    # file empty
+    exit 0
+  else
+    kpid=$(cat "$file")
+    if ! [ -n "${kpid}" -a -d "/proc/${kpid}" ]
     then
       rm $file
+    fi
   fi
 fi
