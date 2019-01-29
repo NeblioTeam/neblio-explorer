@@ -263,17 +263,11 @@ router.post('/search', function(req, res) {
         if (tx) {
           res.redirect('/tx/' +tx.txid);
         } else {
-          db.get_token(query, function(token) {
-            if (token) {
-              res.redirect('/token/' +token.t_id);
+          lib.get_block(query, function(block) {
+            if (block != 'There was an error. Check your console.') {
+              res.redirect('/block/' + query);
             } else {
-              lib.get_block(query, function(block) {
-                if (block != 'There was an error. Check your console.') {
-                  res.redirect('/block/' + query);
-                } else {
-                  route_get_index(res, locale.ex_search_error + query );
-                }
-              });
+              route_get_index(res, locale.ex_search_error + query );
             }
           });
         }
@@ -284,11 +278,17 @@ router.post('/search', function(req, res) {
       if (address) {
         res.redirect('/address/' + address.a_id);
       } else {
-        lib.get_blockhash(query, function(hash) {
-          if (hash != 'There was an error. Check your console.') {
-            res.redirect('/block/' + hash);
+        db.get_token(query, function(token) {
+          if (token) {
+            res.redirect('/token/' +token.t_id);
           } else {
-            route_get_index(res, locale.ex_search_error + query );
+            lib.get_blockhash(query, function(hash) {
+              if (hash != 'There was an error. Check your console.') {
+                res.redirect('/block/' + hash);
+              } else {
+                route_get_index(res, locale.ex_search_error + query );
+              }
+            });
           }
         });
       }
