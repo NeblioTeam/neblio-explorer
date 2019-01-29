@@ -16,15 +16,16 @@ function route_get_block(res, blockhash) {
           if (txs.length > 0) {
             res.render('block', { active: 'block', block: block, confirmations: settings.confirmations, txs: txs});
           } else {
-            db.create_txs(block, function(){
-              db.get_txs(block, function(ntxs) {
-                if (ntxs.length > 0) {
-                  res.render('block', { active: 'block', block: block, confirmations: settings.confirmations, txs: ntxs});
-                } else {
-                  route_get_index(res, 'Block not found: ' + blockhash);
-                }
-              });
-            });
+          	route_get_index(res, 'Block not found: ' + blockhash);
+            // db.create_txs(block, function(){
+            //   db.get_txs(block, function(ntxs) {
+            //     if (ntxs.length > 0) {
+            //       res.render('block', { active: 'block', block: block, confirmations: settings.confirmations, txs: ntxs});
+            //     } else {
+            //       route_get_index(res, 'Block not found: ' + blockhash);
+            //     }
+            //   });
+            // });
           }
         });
       }
@@ -46,43 +47,44 @@ function route_get_tx(res, txid) {
         });
       }
       else {
-        lib.get_rawtransaction(txid, function(rtx) {
-          if (rtx.txid) {
-            lib.prepare_vin(rtx, function(vin) {
-              lib.prepare_vout(rtx.vout, rtx.txid, vin, function(rvout, rvin) {
-                lib.calculate_total(rvout, function(total){
-                  if (!rtx.confirmations > 0) {
-                    var utx = {
-                      txid: rtx.txid,
-                      vin: rvin,
-                      vout: rvout,
-                      total: total.toFixed(8),
-                      timestamp: rtx.time,
-                      blockhash: '-',
-                      blockindex: -1,
-                    };
-                    res.render('tx', { active: 'tx', tx: utx, confirmations: settings.confirmations, blockcount:-1});
-                  } else {
-                    var utx = {
-                      txid: rtx.txid,
-                      vin: rvin,
-                      vout: rvout,
-                      total: total.toFixed(8),
-                      timestamp: rtx.time,
-                      blockhash: rtx.blockhash,
-                      blockindex: rtx.blockheight,
-                    };
-                    lib.get_blockcount(function(blockcount) {
-                      res.render('tx', { active: 'tx', tx: utx, confirmations: settings.confirmations, blockcount: blockcount});
-                    });
-                  }
-                });
-              });
-            });
-          } else {
-            route_get_index(res, null);
-          }
-        });
+      	route_get_index(res, 'TX not found: ' + txid);
+        // lib.get_rawtransaction(txid, function(rtx) {
+        //   if (rtx.txid) {
+        //     lib.prepare_vin(rtx, function(vin) {
+        //       lib.prepare_vout(rtx.vout, rtx.txid, vin, function(rvout, rvin) {
+        //         lib.calculate_total(rvout, function(total){
+        //           if (!rtx.confirmations > 0) {
+        //             var utx = {
+        //               txid: rtx.txid,
+        //               vin: rvin,
+        //               vout: rvout,
+        //               total: total.toFixed(8),
+        //               timestamp: rtx.time,
+        //               blockhash: '-',
+        //               blockindex: -1,
+        //             };
+        //             res.render('tx', { active: 'tx', tx: utx, confirmations: settings.confirmations, blockcount:-1});
+        //           } else {
+        //             var utx = {
+        //               txid: rtx.txid,
+        //               vin: rvin,
+        //               vout: rvout,
+        //               total: total.toFixed(8),
+        //               timestamp: rtx.time,
+        //               blockhash: rtx.blockhash,
+        //               blockindex: rtx.blockheight,
+        //             };
+        //             lib.get_blockcount(function(blockcount) {
+        //               res.render('tx', { active: 'tx', tx: utx, confirmations: settings.confirmations, blockcount: blockcount});
+        //             });
+        //           }
+        //         });
+        //       });
+        //     });
+        //   } else {
+        //     route_get_index(res, null);
+        //   }
+        // });
       }
     });
   }
@@ -261,11 +263,17 @@ router.post('/search', function(req, res) {
         if (tx) {
           res.redirect('/tx/' +tx.txid);
         } else {
-          lib.get_block(query, function(block) {
-            if (block != 'There was an error. Check your console.') {
-              res.redirect('/block/' + query);
+          db.get_token(query, function(token) {
+            if (token) {
+              res.redirect('/token/' +token.t_id);
             } else {
-              route_get_index(res, locale.ex_search_error + query );
+              lib.get_block(query, function(block) {
+                if (block != 'There was an error. Check your console.') {
+                  res.redirect('/block/' + query);
+                } else {
+                  route_get_index(res, locale.ex_search_error + query );
+                }
+              });
             }
           });
         }
