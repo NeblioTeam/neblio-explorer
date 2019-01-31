@@ -1,0 +1,5 @@
+configobj==5.0.6
+jsmin==2.2.2
+pymongo==3.7.2
+python-bitcoinrpc==1.0
+six==1.11.0
