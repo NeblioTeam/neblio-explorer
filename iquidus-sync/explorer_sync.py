@@ -392,9 +392,9 @@ class Database(object):
 
     def update_richlist(self):
         balance = list(self.db.addresses.find().sort(
-            [("balance", pymongo.DESCENDING)]).limit(100))
+            [("balance", pymongo.DESCENDING)]).limit(102))
         received = list(self.db.addresses.find().sort(
-            [("received", pymongo.DESCENDING)]).limit(100))
+            [("received", pymongo.DESCENDING)]).limit(101))
         self.db.richlists.update_one(
             {"coin": self._coin},
             {
