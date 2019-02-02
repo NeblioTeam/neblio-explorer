@@ -494,7 +494,7 @@ class Tx(object):
         return self._tx["txid"]
 
     def _get_metadata_of_issuance(self, token_id, retries=0):
-    	if retries > 10: return {}
+        if retries > 10: return {}
         try:
             data1 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id).read()
             metadata = json.loads(data1)
