@@ -208,22 +208,34 @@ class Database(object):
             addrs = self._process_vin(vin, tx["txid"], addrs)
         return addrs
 
-    def update_token(self, token_id):
+    def update_token(self, token_id, retries=0):
+        if retries > 10: return
         try:
             data1 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id).read()
             metadata = json.loads(data1)
             someUtxo = metadata.get("someUtxo", "")
             #logger.info("Getting metdata for token: "+token_id)
         except Exception as err:
-            logger.warning("Error getting initial metadata: %s" % err)
+            logger.warning("RETRY: Error getting initial metadata: %s" % err)
+            time.sleep(10)
+            retries += 1
+            self.update_token(token_id, retries)
         if (someUtxo):
             try:
                 #logger.info("At UTXO: "+someUtxo)
                 data2 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id + '/' + someUtxo).read()
                 metadata = json.loads(data2)
             except Exception as err:
-                logger.warning("Error getting extended metadata: %s" % err)
-                return
+                logger.warning("RETRY: Error getting extended metadata: %s" % err)
+                time.sleep(10)
+                retries += 1
+                self.update_token(token_id, retries)
+            # check for a firstBlock of -1
+            if (metadata.get("firstBlock", 0) < 0):
+                logger.warning("RETRY: Invalid first block in token metadata: %s" % err)
+                time.sleep(10)
+                retries += 1
+                self.update_token(token_id, retries)
             # successfully got all metadata, insert/update it in the db
             token = self.db.tokens.find_one({"t_id": token_id})
             if token is None:
@@ -251,6 +263,7 @@ class Database(object):
                     {"t_id": token_id},
                     {
                         "$set": {
+                            "first_block": metadata.get("firstBlock", 0),
                             "num_burns": metadata.get("numOfBurns", 0),
                             "num_issuance": metadata.get("numOfIssuance", 0),
                             "num_transfers": metadata.get("numOfTransfers", 0),
@@ -480,22 +493,28 @@ class Tx(object):
     def tx_id(self):
         return self._tx["txid"]
 
-    def _get_metadata_of_issuance(self, token_id):
+    def _get_metadata_of_issuance(self, token_id, retries=0):
+    	if retries > 10: return {}
         try:
             data1 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id).read()
             metadata = json.loads(data1)
             someUtxo = metadata.get("someUtxo", "")
             #logger.info("Getting metdata for token: "+token_id)
         except Exception as err:
-            logger.warning("Error getting initial metadata: %s" % err)
-            return {}
+            logger.warning("RETRY: Error getting initial metadata: %s" % err)
+            time.sleep(10)
+            retries += 1
+            self._get_metadata_of_issuance(token_id, retries)
         if (someUtxo):
             try:
                 #logger.info("At UTXO: "+someUtxo)
                 data2 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id + '/' + someUtxo).read()
                 metadata = json.loads(data2)
             except Exception as err:
-                logger.warning("Error getting extended metadata: %s" % err)
+                logger.warning("RETRY: Error getting extended metadata: %s" % err)
+                time.sleep(10)
+                retries += 1
+                self._get_metadata_of_issuance(token_id, retries)
             return metadata
         else:
             return metadata
