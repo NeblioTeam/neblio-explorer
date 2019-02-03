@@ -526,7 +526,7 @@ class Tx(object):
                 self._get_metadata_of_issuance(token_id, retries)
             return metadata
         else:
-            logger.warning("RETRY:  No UTXO, cannot get token info for: "+token_id) %s" % err)
+            logger.warning("RETRY:  No UTXO, cannot get token info for: "+token_id)
             time.sleep(10)
             retries += 1
             self._get_metadata_of_issuance(token_id, retries)
