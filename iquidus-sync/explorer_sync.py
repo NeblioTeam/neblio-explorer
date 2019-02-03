@@ -595,8 +595,9 @@ class Tx(object):
             details = self._get_input_details(tx.input())
             for t in details["tokens"]:
                 tx_meta = self._get_metadata_of_issuance(t["id"])
-                tx_meta_of_iss = tx_meta.get("metadataOfIssuence", {}).get("data", {})
-                t["meta"] = tx_meta_of_iss
+                tx_meta_of_iss = tx_meta.get("metadataOfIssuence", {})
+                tx_meta_data = tx_meta_of_iss.get("data", {})
+                t["meta"] = tx_meta_data
             if addr_map.get(details["addresses"]) is None:
                 addr_map[details["addresses"]] = {}
                 addr_map[details["addresses"]]["amount"] = details["amount"]
@@ -647,8 +648,9 @@ class Tx(object):
                 # explorer expects id, not tokenId
                 t["id"] = t.pop("tokenId")
                 tx_meta = self._get_metadata_of_issuance(t["id"])
-                tx_meta_of_iss = tx_meta.get("metadataOfIssuence", {}).get("data", {})
-                t["meta"] = tx_meta_of_iss
+                tx_meta_of_iss = tx_meta.get("metadataOfIssuence", {})
+                tx_meta_data = tx_meta_of_iss.get("data", {})
+                t["meta"] = tx_meta_data
             if addrs.get(addr):
                 addrs[addr]["amount"] += int(i["value"] * NUM_UNITS)
                 addrs[addr]["tokens"].extend(vout_tokens)
