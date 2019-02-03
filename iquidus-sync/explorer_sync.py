@@ -211,7 +211,7 @@ class Database(object):
         return addrs
 
     def update_token(self, token_id, retries=0):
-    	if token_id in invalid_token_ids: return
+        if token_id in invalid_token_ids: return
         if retries > 10: return
         try:
             data1 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id).read()
@@ -500,7 +500,7 @@ class Tx(object):
         return self._tx["txid"]
 
     def _get_metadata_of_issuance(self, token_id, retries=0):
-    	if token_id in invalid_token_ids: return {}
+        if token_id in invalid_token_ids: return {}
         if retries > 10: return {}
         try:
             data1 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id).read()
