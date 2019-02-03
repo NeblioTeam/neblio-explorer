@@ -32,7 +32,8 @@ NUM_UNITS = 100000000
 ntp1_api_url = ''
 
 invalid_token_ids = ['La77KcJTUj991FnvxNKhrCD1ER8S81T3LgECS6',
-                     'La347xkKhi5VUCNDCqxXU4F1RUu8wPvC3pnQk6']
+                     'La347xkKhi5VUCNDCqxXU4F1RUu8wPvC3pnQk6',
+                     'La6gfSao2Qwmswzzf3rbn3hCzYtBntRUbSxfdF']
 
 class DecimalEncoder(json.JSONEncoder):
     def _iterencode(self, o, markers=None):
