@@ -33,7 +33,16 @@ ntp1_api_url = ''
 
 invalid_token_ids = ['La77KcJTUj991FnvxNKhrCD1ER8S81T3LgECS6',
                      'La347xkKhi5VUCNDCqxXU4F1RUu8wPvC3pnQk6',
-                     'La6gfSao2Qwmswzzf3rbn3hCzYtBntRUbSxfdF']
+                     'La6gfSao2Qwmswzzf3rbn3hCzYtBntRUbSxfdF',
+                     'La5wtUCjMyd5zRFWdW2jLVykct1nP57NPrJqaL',
+                     'La531vUwiu9NnvtJcwPEjV84HrdKCupFCCb6D7',
+                     'La62EhxMCGKFrqNMoDzYpHtwbPHXoDZRUKX2UU',
+                     'La7BWZqFRSnJauaLQYniVYBh4KZkjgdTMRBNp7',
+                     'La6iR2nU8pBuo9ozwihRrva8qDmA1gcSmus2sK',
+                     'LaAHLLzkK8ar53vWyCZt4keCjC8Ea26Nv4pRNd',
+                     'La3oUp5rGyAyyPDivRYCY5Q5GgrjoWSjsSU6aE',
+                     'La9F14hMaUfn5mwkPkJQHXKmNVKsXfPq54SqK4',
+                     'La977rwKFV5VZo3ABXi8Vr4X6jtRc9LdWqjZbt']
 
 class DecimalEncoder(json.JSONEncoder):
     def _iterencode(self, o, markers=None):
