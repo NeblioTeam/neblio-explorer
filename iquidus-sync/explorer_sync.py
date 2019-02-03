@@ -273,7 +273,10 @@ class Database(object):
                     }
                 )
         else:
-            logger.warning("No UTXO, cannot update token in db for: "+token_id)
+            logger.warning("RETRY: No UTXO, cannot update token in db for: "+token_id)
+            time.sleep(10)
+            retries += 1
+            self.update_token(token_id, retries)
 
     def update_addresses(self, transactions):
         addrs = self._prepare_ins_outs(transactions)
@@ -515,9 +518,18 @@ class Tx(object):
                 time.sleep(10)
                 retries += 1
                 self._get_metadata_of_issuance(token_id, retries)
+            # check for a firstBlock of -1
+            if (metadata.get("firstBlock", 0) < 0):
+                logger.warning("RETRY: Invalid first block in token metadata: %s" % err)
+                time.sleep(10)
+                retries += 1
+                self._get_metadata_of_issuance(token_id, retries)
             return metadata
         else:
-            return metadata
+            logger.warning("RETRY:  No UTXO, cannot get token info for: "+token_id) %s" % err)
+            time.sleep(10)
+            retries += 1
+            self._get_metadata_of_issuance(token_id, retries)
 
     def _output_is_valid(self, out):
         script = out.get("scriptPubKey", None)
