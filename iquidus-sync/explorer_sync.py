@@ -512,7 +512,7 @@ class Tx(object):
     def tx_id(self):
         return self._tx["txid"]
 
-    def _get_metadata_of_issuance(self, token_id, retries=0):
+    def _get_token_metadata(self, token_id, utxo=None, retries=0):
         if token_id in invalid_token_ids: return {}
         if retries > 10: return {}
         try:
@@ -524,29 +524,32 @@ class Tx(object):
             logger.warning("RETRY: Error getting initial metadata: %s" % err)
             time.sleep(10)
             retries += 1
-            self._get_metadata_of_issuance(token_id, retries)
+            self._get_token_metadata(token_id, utxo, retries)
         if (someUtxo):
             try:
                 #logger.info("At UTXO: "+someUtxo)
-                data2 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id + '/' + someUtxo).read()
+                # get metadata at a specific utxo, if we do not have one, use someUtxo
+                if utxo is None:
+                  utxo = someUtxo
+                data2 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id + '/' + utxo).read()
                 metadata = json.loads(data2)
             except Exception as err:
                 logger.warning("RETRY: Error getting extended metadata: %s" % err)
                 time.sleep(10)
                 retries += 1
-                self._get_metadata_of_issuance(token_id, retries)
+                self._get_token_metadata(token_id, utxo, retries)
             # check for a firstBlock of -1
             if (metadata.get("firstBlock", 0) < 0):
                 logger.warning("RETRY: Invalid first block in token metadata: %s" % err)
                 time.sleep(10)
                 retries += 1
-                self._get_metadata_of_issuance(token_id, retries)
+                self._get_token_metadata(token_id, utxo, retries)
             return metadata
         else:
             logger.warning("RETRY:  No UTXO, cannot get token info for: "+token_id)
             time.sleep(10)
             retries += 1
-            self._get_metadata_of_issuance(token_id, retries)
+            self._get_token_metadata(token_id, utxo, retries)
 
     def _output_is_valid(self, out):
         script = out.get("scriptPubKey", None)
@@ -611,7 +614,7 @@ class Tx(object):
 
             details = self._get_input_details(tx.input())
             for t in details["tokens"]:
-                tx_meta = self._get_metadata_of_issuance(t["id"])
+                tx_meta = self._get_token_metadata(t["id"])
                 if tx_meta is not None:
                     tx_meta_of_iss = tx_meta.get("metadataOfIssuence", {})
                     tx_meta_data = tx_meta_of_iss.get("data", {})
@@ -635,6 +638,7 @@ class Tx(object):
             return self._vout
         ret = []
         vout = self._tx.get("vout", [])
+        txid = self._tx.get("txid", "")
         if len(vout) == 0:
             return ret
         tx = vout[0]
@@ -667,11 +671,14 @@ class Tx(object):
             for t in vout_tokens:
                 # explorer expects id, not tokenId
                 t["id"] = t.pop("tokenId")
-                tx_meta = self._get_metadata_of_issuance(t["id"])
+                utxo = txid+":"+i.get("n", 0)
+                tx_meta = self._get_token_metadata(t["id"], utxo)
                 if tx_meta is not None:
                     tx_meta_of_iss = tx_meta.get("metadataOfIssuence", {})
                     tx_meta_data = tx_meta_of_iss.get("data", {})
                     t["meta"] = tx_meta_data
+                    tx_meta_of_utxo = tx_meta.get("metadataOfUtxo", {})
+                    t["meta_of_utxo"] = tx_meta_of_utxo
                 else:
                     t["meta"] = {}
             if addrs.get(addr):
