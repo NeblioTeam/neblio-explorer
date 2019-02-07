@@ -46,12 +46,41 @@ block content
         tbody
           tr
             if address.a_id !== 'coinbase'
-             td 
-               - var sorted_tokens = sort_tokens(address.tokens)
-               each t in sorted_tokens
-                 if t.amount > 0
-                   | #[img.image(src='#{display_token_icon(t)}' height="20px")] #[a(href='/token/#{t.id}') #{display_token_name(t)}] - #{t.amount}
-                   br
+              - var sorted_tokens = sort_tokens(address.tokens)
+              - var balance_tokens = []
+              each t in sorted_tokens
+                if t.amount > 0
+                  - balance_tokens.push(t)
+              td(style='border-color:transparent;border-bottom-style:hidden;border-right-style:hidden;border-left-style:hidden;')
+                table.table.table-bordered.table-striped.summary-table
+                  tbody
+                    tr
+                      td(style='width:50%;border-color:transparent;border-bottom-style:hidden;border-right-style:hidden;border-left-style:hidden;')
+                        table.table.table-bordered.table-striped.summary-table
+                          tbody
+                            each t, i in balance_tokens
+                              if (i % 2 == 0)
+                                tr
+                                  td(style='width:8%')
+                                    center
+                                      #[img.image(src='#{display_token_icon(t)}' height="20px")]
+                                  td(style='width:24%')
+                                    strong
+                                      #[a(href='/token/#{t.id}') #{display_token_name(t)}]
+                                  td(style='width:68%') #{t.amount}
+                      td(style='width:50%;border-color:transparent;border-bottom-style:hidden;border-right-style:hidden;border-left-style:hidden;')
+                        table.table.table-bordered.table-striped.summary-table
+                          tbody       
+                            each t, i in balance_tokens
+                              if (i % 2 == 1) 
+                                tr
+                                  td(style='width:8%')
+                                    center
+                                      #[img.image(src='#{display_token_icon(t)}' height="20px")]
+                                  td(style='width:24%')
+                                    strong
+                                      #[a(href='/token/#{t.id}') #{display_token_name(t)}]
+                                  td(style='width:68%') #{t.amount}
     .panel.panel-default.hidden-xs
       .panel-heading
         strong #{settings.locale.ex_latest_transactions}
