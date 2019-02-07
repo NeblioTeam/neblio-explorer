@@ -12,9 +12,11 @@ import subprocess
 import time
 import pprint
 import urllib.request, json
+import pickle
 
 from bitcoinrpc.authproxy import AuthServiceProxy
 from configobj import ConfigObj
+from sys import getsizeof
 
 
 parser = argparse.ArgumentParser(description='explorer sync parameters')
@@ -148,7 +150,7 @@ class Database(object):
                         if addr_token["id"] == out_token["id"]:
                             addr_token["received"] = addr_token.get("received", 0) + int(out_token.get("amount", "0"))
                             token_exists = True
-                            #break
+                            break
                     if not token_exists:
                         details["tokens"].append({
                             "id": out_token["id"],
@@ -156,6 +158,9 @@ class Database(object):
                             "meta": out_token.get("meta", {})
                         })
                 addrs[address] = details
+            # add utxos with metadata to this token
+            for out_token in out.get("tokens", []):
+                self.add_metadata_utxo_to_token(out_token["id"], txid)
         return addrs
 
     def _process_vin(self, vins, txid, addrs):
@@ -198,7 +203,7 @@ class Database(object):
                         if addr_token["id"] == vin_token["id"]:
                             addr_token["sent"] = addr_token.get("sent", 0) + int(vin_token.get("amount", "0"))
                             token_exists = True
-                            #break
+                            break
                     if not token_exists:
                         details["tokens"].append({
                             "id": vin_token["id"],
@@ -293,6 +298,41 @@ class Database(object):
             time.sleep(10)
             retries += 1
             self.update_token(token_id, retries)
+
+    def add_metadata_utxo_to_token(self, token_id, txid):
+        token = self.db.tokens.find_one({"t_id": token_id})
+        if token is None:
+            self.update_token(token_id)
+            token = self.db.tokens.find_one({"t_id": token_id})
+        tx = self.db.txes.find_one({"txid": txid})
+        metadata_size = 0
+        for out in tx.get("vout", []):
+            for out_token in out.get("tokens", {}):
+                if out_token.get("id", "") == token_id:
+                    serialized_metadata = pickle.dumps(out_token.get("meta_of_utxo", {}))
+                    metadata_size = getsizeof(serialized_metadata)
+                    if metadata_size > 39: # 39 is the size of an empty obj
+                        break
+            if metadata_size > 39:
+                break
+        if metadata_size < 40: # empty obj, return
+            return
+        utxo = {"txid": txid,
+                "timestamp": tx.get("timestamp", 0),
+                "metadata_size": metadata_size}
+        utxos = token.get("metadata_utxos", [])
+        if utxo in utxos:
+            return
+        else:
+            utxos.append(utxo)
+            self.db.tokens.update_one(
+                {"t_id": token_id},
+                {
+                    "$set": {
+                        "metadata_utxos": utxos
+                    }
+                }
+            )
 
     def update_addresses(self, transactions):
         addrs = self._prepare_ins_outs(transactions)
@@ -671,7 +711,7 @@ class Tx(object):
             for t in vout_tokens:
                 # explorer expects id, not tokenId
                 t["id"] = t.pop("tokenId")
-                utxo = txid+":"+i.get("n", 0)
+                utxo = txid+":"+str(i.get("n", 0))
                 tx_meta = self._get_token_metadata(t["id"], utxo)
                 if tx_meta is not None:
                     tx_meta_of_iss = tx_meta.get("metadataOfIssuence", {})

@@ -128,4 +128,34 @@ block content
                       td.success.hidden-sm  #{ramount.toFixed(8)}
                     tr.hidden-lg.hidden-md
                       td.success #{ramount.toFixed(8)} #{settings.symbol}
+    .panel.panel-default
+      .panel-heading.hidden-xs
+        strong NTP1 Transaction Metadata
+      each r in tx.vout
+        if (tx.has_token && r.tokens)
+          - var sorted_tokens = sort_tokens(r.tokens)
+          each t in sorted_tokens
+            if (t.meta_of_utxo && t.meta_of_utxo.userData && t.meta_of_utxo.userData.meta)
+              table.table.table-bordered.table-striped.summary-table
+                thead
+                  tr
+                    th Key
+                    th.hidden-xs Value
+                tbody
+                  if t.meta_of_utxo.userData.meta.length > 0
+                    each m in t.meta_of_utxo.userData.meta
+                      - for(var prop in m)
+                        tr
+                          td #{prop}
+                          td #{m[prop]}
+            else
+              table.table.table-bordered.table-striped.summary-table
+                thead
+                  tr
+                    th None
+        else
+          table.table.table-bordered.table-striped.summary-table
+              thead
+                tr
+                  th None
     .footer-padding

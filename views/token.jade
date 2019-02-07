@@ -82,7 +82,35 @@ block content
             td(style="vertical-align:middle;")
               center
                 #[img.image(src='#{display_token_icon(token)}' height="200px")]
-
+    <br>
+    .panel.panel-default.panel-address-summary
+      .panel-heading(style='position:relative;')
+        strong #[img.image(src='#{display_token_icon(token)}' height="20px")] #{display_token_name(token)} Metadata Transactions
+      if (token.metadata_utxos && token.metadata_utxos.length > 0)
+        table.table.table-bordered.table-striped.history-table
+          thead
+            th Txid
+            th Metadata Size
+            th Timestamp
+          tbody
+            each tx in token.metadata_utxos.reverse()
+              - var time = format_unixtime(tx.timestamp)
+              - var size = (tx.metadata_size/1024).toFixed(2)
+              tr
+                td #[a(href='/tx/#{tx.txid}') #{tx.txid}]
+                td #{size} kB
+                td #{time}
+      else
+        table.table.table-bordered.table-striped.summary-table
+          thead
+            th Txid
+            th Metadata Size
+            th Timestamp
+          tbody
+            tr
+              td None
+              td None
+              td None
     br
     .footer-padding
 

@@ -16,6 +16,7 @@ var TokenSchema = new Schema({
   issuance_txid: { type: String, default: "" },
   issuance_address: { type: String, default: "" },
   meta_of_issuance: { type: Object, default: {} },
+  metadata_utxos: { type: Array, default: [] },
 }, {id: false});
 
 module.exports = mongoose.model('Token', TokenSchema);
