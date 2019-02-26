@@ -12,11 +12,10 @@ import subprocess
 import time
 import pprint
 import urllib.request, json
-import pickle
+import zlib
 
 from bitcoinrpc.authproxy import AuthServiceProxy
 from configobj import ConfigObj
-from sys import getsizeof
 
 
 parser = argparse.ArgumentParser(description='explorer sync parameters')
@@ -46,7 +45,11 @@ invalid_token_ids = ['La77KcJTUj991FnvxNKhrCD1ER8S81T3LgECS6',
                      'LaAHLLzkK8ar53vWyCZt4keCjC8Ea26Nv4pRNd',
                      'La3oUp5rGyAyyPDivRYCY5Q5GgrjoWSjsSU6aE',
                      'La9F14hMaUfn5mwkPkJQHXKmNVKsXfPq54SqK4',
-                     'La977rwKFV5VZo3ABXi8Vr4X6jtRc9LdWqjZbt']
+                     'La977rwKFV5VZo3ABXi8Vr4X6jtRc9LdWqjZbt',
+                     'La9rpjB2v9VHQbDa1gePZKUnwkdHZakXPgFn85',
+                     'La9tKf3uoQvsiWyqUYDWWNxg9ofSZBkskVc2qh',
+                     'La6gfSao2Qwmswzzf3rbn3hCzYtBntRUbSxfdF',
+                     'La44xkuQuLT7P2bsszt3a6yKqN7E6rw75A8WDT']
 
 class DecimalEncoder(json.JSONEncoder):
     def _iterencode(self, o, markers=None):
@@ -232,25 +235,37 @@ class Database(object):
         if token_id in invalid_token_ids: return
         if retries > 10: return
         try:
-            data1 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id).read()
-            metadata = json.loads(data1)
+            data1 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id)
+            metadata = json.loads(data1.read())
             someUtxo = metadata.get("someUtxo", "")
             #logger.info("Getting metdata for token: "+token_id)
         except Exception as err:
             logger.warning("RETRY: Error getting initial metadata: %s" % err)
+            logger.warning(token_id)
             time.sleep(10)
             retries += 1
             self.update_token(token_id, retries)
+        finally:
+            try:
+                if data1: data1.close()
+            except NameError: 
+                pass
         if (someUtxo):
             try:
                 #logger.info("At UTXO: "+someUtxo)
-                data2 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id + '/' + someUtxo).read()
-                metadata = json.loads(data2)
+                data2 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id + '/' + someUtxo)
+                metadata = json.loads(data2.read())
             except Exception as err:
                 logger.warning("RETRY: Error getting extended metadata: %s" % err)
+                logger.warning(token_id + "/" + someUtxo)
                 time.sleep(10)
                 retries += 1
                 self.update_token(token_id, retries)
+            finally:
+                try:
+                    if data2: data2.close()
+                except NameError:
+                    pass
             # check for a firstBlock of -1
             if (metadata.get("firstBlock", 0) < 0):
                 logger.warning("RETRY: Invalid first block in token metadata: %s" % err)
@@ -306,20 +321,23 @@ class Database(object):
             token = self.db.tokens.find_one({"t_id": token_id})
         tx = self.db.txes.find_one({"txid": txid})
         metadata_size = 0
+        serialized_metadata = ''
         for out in tx.get("vout", []):
             for out_token in out.get("tokens", {}):
                 if out_token.get("id", "") == token_id:
-                    serialized_metadata = pickle.dumps(out_token.get("meta_of_utxo", {}))
-                    metadata_size = getsizeof(serialized_metadata)
-                    if metadata_size > 39: # 39 is the size of an empty obj
+                    serialized_metadata = json.dumps(out_token.get("meta_of_utxo", {}),separators=(',', ':'))
+                    metadata_size = len(serialized_metadata.encode())
+                    if metadata_size > 2: # {} null object
                         break
-            if metadata_size > 39:
+            if metadata_size > 2:
                 break
-        if metadata_size < 40: # empty obj, return
+        if metadata_size == 2: # empty obj, return
             return
+        z = zlib.compress(serialized_metadata.encode())
         utxo = {"txid": txid,
                 "timestamp": tx.get("timestamp", 0),
-                "metadata_size": metadata_size}
+                "metadata_size": metadata_size,
+                "metadata_size_comp": len(z)}
         utxos = token.get("metadata_utxos", [])
         if utxo in utxos:
             return
@@ -351,6 +369,9 @@ class Database(object):
                     if already_exists:
                         continue
                     txs.append(tx)
+                # remove duplicates
+                seen = set()
+                txns = [x for x in txs if [(x['addresses']) not in seen, seen.add((x['addresses']))][0]]
                 balance = received - sent
                 addr_tokens = info.get("tokens", [])
                 for tx_token in addrs[addr].get("tokens", []):
@@ -381,7 +402,7 @@ class Database(object):
                             "received": received,
                             "balance": balance,
                             "tokens": addr_tokens,
-                            "txs": txs[-self._txcount:],
+                            "txs": txns[-self._txcount:],
                         }
                     })
             else:
@@ -398,6 +419,9 @@ class Database(object):
                 sent = addrs[addr].get("sent", 0)
                 received = addrs[addr].get("received", 0)
                 txs = addrs[addr].get("txs", [])
+                # remove duplicates
+                seen = set()
+                txns = [x for x in txs if [(x['addresses']) not in seen, seen.add((x['addresses']))][0]]
                 balance = received - sent
                 self.db.addresses.insert_one(
                     {
@@ -406,7 +430,7 @@ class Database(object):
                         "received": received,
                         "balance": balance,
                         "tokens": addr_tokens,
-                        "txs": txs[-self._txcount:],
+                        "txs": txns[-self._txcount:],
                     }
                 )
         return len(addrs)
@@ -428,7 +452,7 @@ class Database(object):
                 for addr_token in addr_tokens:
                     if (addr_token["id"] == db_token["id"]):
                         db_token_sent = db_token.get("sent", 0) - addr_token.get("sent", 0)
-                        db_token_received = db_token.get("recevied", 0) - addr_token.get("received", 0)
+                        db_token_received = db_token.get("received", 0) - addr_token.get("received", 0)
                         db_token["sent"] = db_token_sent
                         db_token["received"] = db_token_received
                         db_token["amount"] = db_token["received"] - db_token["sent"]
@@ -556,28 +580,46 @@ class Tx(object):
         if token_id in invalid_token_ids: return {}
         if retries > 10: return {}
         try:
-            data1 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id).read()
-            metadata = json.loads(data1)
+            data1 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id)
+            metadata = json.loads(data1.read())
             someUtxo = metadata.get("someUtxo", "")
             #logger.info("Getting metdata for token: "+token_id)
         except Exception as err:
-            logger.warning("RETRY: Error getting initial metadata: %s" % err)
+            logger.warning("RETRY: Error getting initial metadata for: %s" % err)
+            logger.warning(token_id)
             time.sleep(10)
             retries += 1
             self._get_token_metadata(token_id, utxo, retries)
+        finally:
+            try:
+                if data1: data1.close()
+            except NameError:
+                pass
         if (someUtxo):
             try:
                 #logger.info("At UTXO: "+someUtxo)
                 # get metadata at a specific utxo, if we do not have one, use someUtxo
                 if utxo is None:
                   utxo = someUtxo
-                data2 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id + '/' + utxo).read()
-                metadata = json.loads(data2)
+                data2 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id + '/' + utxo)
+                metadata = json.loads(data2.read())
             except Exception as err:
                 logger.warning("RETRY: Error getting extended metadata: %s" % err)
-                time.sleep(10)
-                retries += 1
-                self._get_token_metadata(token_id, utxo, retries)
+                logger.warning(token_id + "/" + utxo)
+                if err.code == 500:
+                    #if we get an HTTP 500, we cannot get extended metadata for this UTXO, use someUtxo
+                    retries += 1
+                    logger.warning("Using someUtxo due to HTTP 500 " + someUtxo)
+                    self._get_token_metadata(token_id, someUtxo, retries)
+                else:
+                    time.sleep(10)
+                    retries += 1
+                    self._get_token_metadata(token_id, utxo, retries)
+            finally:
+                try:
+                    if data2: data2.close()
+                except NameError:
+                    pass
             # check for a firstBlock of -1
             if (metadata.get("firstBlock", 0) < 0):
                 logger.warning("RETRY: Invalid first block in token metadata: %s" % err)
@@ -697,6 +739,11 @@ class Tx(object):
 
         addrs = {}
 
+        # All token outputs in a transaction have the same metadata at each
+        # token output. To speed up syncing, check for metadata on the first
+        # token output of the transction and save it here. Skipping subsequent
+        # API calls.
+        tx_meta_of_utxo = None
         for i in vout:
             if self._output_is_valid(i) is False:
                 continue
@@ -711,13 +758,18 @@ class Tx(object):
             for t in vout_tokens:
                 # explorer expects id, not tokenId
                 t["id"] = t.pop("tokenId")
-                utxo = txid+":"+str(i.get("n", 0))
-                tx_meta = self._get_token_metadata(t["id"], utxo)
+                tx_meta = None
+                if tx_meta_of_utxo is None:
+                    utxo = txid+":"+str(i.get("n", 0))
+                    tx_meta = self._get_token_metadata(t["id"], utxo)
+                else:
+                    tx_meta = self._get_token_metadata(t["id"])
                 if tx_meta is not None:
                     tx_meta_of_iss = tx_meta.get("metadataOfIssuence", {})
                     tx_meta_data = tx_meta_of_iss.get("data", {})
                     t["meta"] = tx_meta_data
-                    tx_meta_of_utxo = tx_meta.get("metadataOfUtxo", {})
+                    if tx_meta_of_utxo is None:
+                        tx_meta_of_utxo = tx_meta.get("metadataOfUtxo", {})
                     t["meta_of_utxo"] = tx_meta_of_utxo
                 else:
                     t["meta"] = {}

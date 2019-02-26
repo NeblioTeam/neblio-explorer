@@ -90,15 +90,16 @@ block content
         table.table.table-bordered.table-striped.history-table
           thead
             th Txid
-            th Metadata Size
+            th Metadata Size (RAW/Compressed)
             th Timestamp
           tbody
             each tx in token.metadata_utxos.reverse()
               - var time = format_unixtime(tx.timestamp)
               - var size = (tx.metadata_size/1024).toFixed(2)
+              - var size_comp = (tx.metadata_size_comp/1024).toFixed(2)
               tr
                 td #[a(href='/tx/#{tx.txid}') #{tx.txid}]
-                td #{size} kB
+                td #{size} kB / #{size_comp} kB
                 td #{time}
       else
         table.table.table-bordered.table-striped.summary-table

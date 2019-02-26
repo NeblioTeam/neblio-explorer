@@ -131,6 +131,7 @@ block content
     .panel.panel-default
       .panel-heading.hidden-xs
         strong NTP1 Transaction Metadata
+        - var has_meta = false
       each r in tx.vout
         if (tx.has_token && r.tokens)
           - var sorted_tokens = sort_tokens(r.tokens)
@@ -144,18 +145,16 @@ block content
                 tbody
                   if t.meta_of_utxo.userData.meta.length > 0
                     each m in t.meta_of_utxo.userData.meta
+                      - has_meta = true
                       - for(var prop in m)
                         tr
                           td #{prop}
                           td #{m[prop]}
-            else
-              table.table.table-bordered.table-striped.summary-table
-                thead
-                  tr
-                    th None
-        else
-          table.table.table-bordered.table-striped.summary-table
-              thead
-                tr
-                  th None
+        if (has_meta)
+          - break
+      if (!has_meta)
+        table.table.table-bordered.table-striped.summary-table
+          thead
+            tr
+              th None
     .footer-padding

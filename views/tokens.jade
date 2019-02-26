@@ -15,13 +15,14 @@ block content
             th #{settings.locale.tk_total_supply}
         tbody
           each t in tokens
-            tr
-              td 
-                #[img.image(src='#{display_token_icon(t)}' height="20px")] #[a(href='/token/#{t.t_id}') #{t.meta_of_issuance.data.tokenName}]
-              td #{t.meta_of_issuance.data.description}
-              td #{t.meta_of_issuance.data.issuer}
-              td
-                a(href='/token/#{t.t_id}') #{t.t_id}
-              td.text-center #{t.total_supply.toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            if (t.meta_of_issuance && t.meta_of_issuance.data && t.meta_of_issuance.data.tokenName)
+              tr
+                td 
+                  #[img.image(src='#{display_token_icon(t)}' height="20px")] #[a(href='/token/#{t.t_id}') #{t.meta_of_issuance.data.tokenName}]
+                td #{t.meta_of_issuance.data.description}
+                td #{t.meta_of_issuance.data.issuer}
+                td
+                  a(href='/token/#{t.t_id}') #{t.t_id}
+                td.text-center #{t.total_supply.toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
 
     .footer-padding  
