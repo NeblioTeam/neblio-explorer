@@ -32,6 +32,8 @@ NUM_UNITS = 100000000
 
 ntp1_api_url = ''
 
+initial_sync_done = False
+
 # metadata cannot be gathered for these as they are invalid
 # do not bother wasting time trying & retrying to get the metadata
 invalid_token_ids = ['La77KcJTUj991FnvxNKhrCD1ER8S81T3LgECS6',
@@ -248,7 +250,7 @@ class Database(object):
         finally:
             try:
                 if data1: data1.close()
-            except NameError: 
+            except NameError:
                 pass
         if (someUtxo):
             try:
@@ -606,8 +608,8 @@ class Tx(object):
             except Exception as err:
                 logger.warning("RETRY: Error getting extended metadata: %s" % err)
                 logger.warning(token_id + "/" + utxo)
-                if err.code == 500:
-                    #if we get an HTTP 500, we cannot get extended metadata for this UTXO, use someUtxo
+                if err.code == 500 && !initial_sync_done:
+                    #if we get an HTTP 500 during initial sync we cannot get extended metadata for this UTXO, use someUtxo
                     retries += 1
                     logger.warning("Using someUtxo due to HTTP 500 " + someUtxo)
                     self._get_token_metadata(token_id, someUtxo, retries)
@@ -858,6 +860,7 @@ class Daemon(object):
         self._conn = AuthServiceProxy(self._url)
         self._db = Database(self._explorer_cfg, self._explorer_cfg["coin"])
         self._set_cwd()
+        global initial_sync_done
 
     def _get_explorer_working_directory(self):
         here = os.path.abspath(os.path.dirname(self._cfg_path))
@@ -1090,6 +1093,8 @@ class Daemon(object):
             "Finished updating blocks. Total addresses touched: %d, "
             "Total blocks processed: %d. Total transactions: %d" % (
                 total_addrs, total_blks, total_txes))
+        if last_height > (chain_height - 100):
+        	initial_sync_done = True
         self._db.update_richlist()
 
     def _has_node(self):
