@@ -574,6 +574,7 @@ class Tx(object):
         self._vin = None
         self._vout = None
         self._time = timestamp
+        global initial_sync_done
 
     def tx_id(self):
         return self._tx["txid"]
