@@ -608,7 +608,7 @@ class Tx(object):
             except Exception as err:
                 logger.warning("RETRY: Error getting extended metadata: %s" % err)
                 logger.warning(token_id + "/" + utxo)
-                if err.code == 500 && !initial_sync_done:
+                if err.code == 500 and not initial_sync_done:
                     #if we get an HTTP 500 during initial sync we cannot get extended metadata for this UTXO, use someUtxo
                     retries += 1
                     logger.warning("Using someUtxo due to HTTP 500 " + someUtxo)
