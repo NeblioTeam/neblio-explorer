@@ -861,7 +861,6 @@ class Daemon(object):
         self._conn = AuthServiceProxy(self._url)
         self._db = Database(self._explorer_cfg, self._explorer_cfg["coin"])
         self._set_cwd()
-        global initial_sync_done
 
     def _get_explorer_working_directory(self):
         here = os.path.abspath(os.path.dirname(self._cfg_path))
@@ -1031,9 +1030,12 @@ class Daemon(object):
     def _process_blocks(self):
         stats = self._db.get_stats()
         chain_height = self.blockchain_height()
+        global initial_sync_done
         if int(stats["last"]) == int(chain_height):
             return
 
+        if last_height > (chain_height - 100):
+            initial_sync_done = True
         diff = int(chain_height) - int(stats["last"])
         last_blk = self._db.get_last_recorded_block()
         last_height = stats["last"]
@@ -1094,8 +1096,6 @@ class Daemon(object):
             "Finished updating blocks. Total addresses touched: %d, "
             "Total blocks processed: %d. Total transactions: %d" % (
                 total_addrs, total_blks, total_txes))
-        if last_height > (chain_height - 100):
-        	initial_sync_done = True
         self._db.update_richlist()
 
     def _has_node(self):
