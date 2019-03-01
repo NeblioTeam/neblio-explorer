@@ -1034,11 +1034,11 @@ class Daemon(object):
         if int(stats["last"]) == int(chain_height):
             return
 
-        if last_height > (chain_height - 100):
-            initial_sync_done = True
         diff = int(chain_height) - int(stats["last"])
         last_blk = self._db.get_last_recorded_block()
         last_height = stats["last"]
+        if last_height > (chain_height - 100):
+            initial_sync_done = True
         logger.info("Last height is %d" % last_height)
         try:
             coin_supply = self.get_coin_supply()
