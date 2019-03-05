@@ -224,6 +224,23 @@ class Database(object):
             raise ValueError("No such address %s" % address)
         return addr
 
+    def keyCleaner(d):
+        if type(d) is dict:
+            for key, value in d.iteritems():
+                d[key] = keyCleaner(value)
+                if '.' in key or '$' in key:
+                	new_key = key.replace('.', '_')
+                	new_key = new_key.replace('$', '_')
+                    d[new_key] = value
+                    del(d[key])
+            return d
+        if type(d) is list:
+            return map(keyCleaner, d)
+        if type(d) is tuple:
+            return tuple(map(keyCleaner, d))
+        return d
+
+
     def _prepare_ins_outs(self, transactions):
         addrs = {}
         for tx in transactions:
@@ -239,6 +256,7 @@ class Database(object):
         try:
             data1 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id)
             metadata = json.loads(data1.read())
+            metadata = keyCleaner(metadata) # remove '.' or '$' from keys
             someUtxo = metadata.get("someUtxo", "")
             #logger.info("Getting metdata for token: "+token_id)
         except Exception as err:
@@ -579,12 +597,29 @@ class Tx(object):
     def tx_id(self):
         return self._tx["txid"]
 
+    def keyCleaner(d):
+        if type(d) is dict:
+            for key, value in d.iteritems():
+                d[key] = keyCleaner(value)
+                if '.' in key or '$' in key:
+                	new_key = key.replace('.', '_')
+                	new_key = new_key.replace('$', '_')
+                    d[new_key] = value
+                    del(d[key])
+            return d
+        if type(d) is list:
+            return map(keyCleaner, d)
+        if type(d) is tuple:
+            return tuple(map(keyCleaner, d))
+        return d
+
     def _get_token_metadata(self, token_id, utxo=None, retries=0):
         if token_id in invalid_token_ids: return {}
         if retries > 10: return {}
         try:
             data1 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id)
             metadata = json.loads(data1.read())
+            metadata = keyCleaner(metadata)
             someUtxo = metadata.get("someUtxo", "")
             #logger.info("Getting metdata for token: "+token_id)
         except Exception as err:
