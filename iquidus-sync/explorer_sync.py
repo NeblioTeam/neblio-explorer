@@ -229,8 +229,8 @@ class Database(object):
             for key, value in d.iteritems():
                 d[key] = keyCleaner(value)
                 if '.' in key or '$' in key:
-                	new_key = key.replace('.', '_')
-                	new_key = new_key.replace('$', '_')
+                    new_key = key.replace('.', '_')
+                    new_key = new_key.replace('$', '_')
                     d[new_key] = value
                     del(d[key])
             return d
@@ -602,8 +602,8 @@ class Tx(object):
             for key, value in d.iteritems():
                 d[key] = keyCleaner(value)
                 if '.' in key or '$' in key:
-                	new_key = key.replace('.', '_')
-                	new_key = new_key.replace('$', '_')
+                    new_key = key.replace('.', '_')
+                    new_key = new_key.replace('$', '_')
                     d[new_key] = value
                     del(d[key])
             return d
