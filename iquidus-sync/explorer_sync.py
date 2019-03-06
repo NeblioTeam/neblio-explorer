@@ -226,7 +226,7 @@ class Database(object):
 
     def keyCleaner(self, d):
         if type(d) is dict:
-            for key, value in d.iteritems():
+            for key, value in d.items():
                 d[key] = self.keyCleaner(value)
                 if '.' in key or '$' in key:
                     new_key = key.replace('.', '_')
@@ -599,7 +599,7 @@ class Tx(object):
 
     def keyCleaner(self, d):
         if type(d) is dict:
-            for key, value in d.iteritems():
+            for key, value in d.items():
                 d[key] = self.keyCleaner(value)
                 if '.' in key or '$' in key:
                     new_key = key.replace('.', '_')
