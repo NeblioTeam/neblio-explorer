@@ -224,10 +224,10 @@ class Database(object):
             raise ValueError("No such address %s" % address)
         return addr
 
-    def keyCleaner(d):
+    def keyCleaner(self, d):
         if type(d) is dict:
             for key, value in d.iteritems():
-                d[key] = keyCleaner(value)
+                d[key] = self.keyCleaner(value)
                 if '.' in key or '$' in key:
                     new_key = key.replace('.', '_')
                     new_key = new_key.replace('$', '_')
@@ -235,9 +235,9 @@ class Database(object):
                     del(d[key])
             return d
         if type(d) is list:
-            return map(keyCleaner, d)
+            return map(self.keyCleaner, d)
         if type(d) is tuple:
-            return tuple(map(keyCleaner, d))
+            return tuple(map(self.keyCleaner, d))
         return d
 
 
@@ -256,7 +256,7 @@ class Database(object):
         try:
             data1 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id)
             metadata = json.loads(data1.read())
-            metadata = keyCleaner(metadata) # remove '.' or '$' from keys
+            metadata = self.keyCleaner(metadata) # remove '.' or '$' from keys
             someUtxo = metadata.get("someUtxo", "")
             #logger.info("Getting metdata for token: "+token_id)
         except Exception as err:
@@ -597,10 +597,10 @@ class Tx(object):
     def tx_id(self):
         return self._tx["txid"]
 
-    def keyCleaner(d):
+    def keyCleaner(self, d):
         if type(d) is dict:
             for key, value in d.iteritems():
-                d[key] = keyCleaner(value)
+                d[key] = self.keyCleaner(value)
                 if '.' in key or '$' in key:
                     new_key = key.replace('.', '_')
                     new_key = new_key.replace('$', '_')
@@ -608,9 +608,9 @@ class Tx(object):
                     del(d[key])
             return d
         if type(d) is list:
-            return map(keyCleaner, d)
+            return map(self.keyCleaner, d)
         if type(d) is tuple:
-            return tuple(map(keyCleaner, d))
+            return tuple(map(self.keyCleaner, d))
         return d
 
     def _get_token_metadata(self, token_id, utxo=None, retries=0):
@@ -619,7 +619,7 @@ class Tx(object):
         try:
             data1 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id)
             metadata = json.loads(data1.read())
-            metadata = keyCleaner(metadata)
+            metadata = self.keyCleaner(metadata)
             someUtxo = metadata.get("someUtxo", "")
             #logger.info("Getting metdata for token: "+token_id)
         except Exception as err:
