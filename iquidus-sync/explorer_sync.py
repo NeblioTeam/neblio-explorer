@@ -275,6 +275,7 @@ class Database(object):
                 #logger.info("At UTXO: "+someUtxo)
                 data2 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id + '/' + someUtxo)
                 metadata = json.loads(data2.read())
+                metadata = self.keyCleaner(metadata) # remove '.' or '$' from keys
             except Exception as err:
                 logger.warning("RETRY: Error getting extended metadata: %s" % err)
                 logger.warning(token_id + "/" + someUtxo)
@@ -619,7 +620,7 @@ class Tx(object):
         try:
             data1 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id)
             metadata = json.loads(data1.read())
-            metadata = self.keyCleaner(metadata)
+            metadata = self.keyCleaner(metadata) # remove '.' or '$' from keys
             someUtxo = metadata.get("someUtxo", "")
             #logger.info("Getting metdata for token: "+token_id)
         except Exception as err:
@@ -641,6 +642,7 @@ class Tx(object):
                   utxo = someUtxo
                 data2 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id + '/' + utxo)
                 metadata = json.loads(data2.read())
+                metadata = self.keyCleaner(metadata) # remove '.' or '$' from keys
             except Exception as err:
                 logger.warning("RETRY: Error getting extended metadata: %s" % err)
                 logger.warning(token_id + "/" + utxo)
