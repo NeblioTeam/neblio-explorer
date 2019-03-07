@@ -225,21 +225,20 @@ class Database(object):
         return addr
 
     def keyCleaner(self, d):
-        if type(d) is dict:
-            for key, value in d.items():
-                d[key] = self.keyCleaner(value)
-                if '.' in key or '$' in key:
-                    new_key = key.replace('.', '_')
-                    new_key = new_key.replace('$', '_')
-                    d[new_key] = value
-                    del(d[key])
+        if isinstance(d, (str, int, float)):
             return d
-        if type(d) is list:
-            return map(self.keyCleaner, d)
-        if type(d) is tuple:
-            return tuple(map(self.keyCleaner, d))
-        return d
-
+        if isinstance(d, dict):
+            new = d.__class__()
+            for k, v in d.items():
+                new_key = k.replace('.','_')
+                if new_key.startswith('$'):
+                    new_key = '_' + new_key[:1]
+                new[new_key] = self.keyCleaner(v)
+        elif isinstance(d, (list, set, tuple)):
+            new = d.__class__(self.keyCleaner(v) for v in d)
+        else:
+            return d
+        return new
 
     def _prepare_ins_outs(self, transactions):
         addrs = {}
@@ -599,20 +598,20 @@ class Tx(object):
         return self._tx["txid"]
 
     def keyCleaner(self, d):
-        if type(d) is dict:
-            for key, value in d.items():
-                d[key] = self.keyCleaner(value)
-                if '.' in key or '$' in key:
-                    new_key = key.replace('.', '_')
-                    new_key = new_key.replace('$', '_')
-                    d[new_key] = value
-                    del(d[key])
+        if isinstance(d, (str, int, float)):
             return d
-        if type(d) is list:
-            return map(self.keyCleaner, d)
-        if type(d) is tuple:
-            return tuple(map(self.keyCleaner, d))
-        return d
+        if isinstance(d, dict):
+            new = d.__class__()
+            for k, v in d.items():
+                new_key = k.replace('.','_')
+                if new_key.startswith('$'):
+                    new_key = '_' + new_key[:1]
+                new[new_key] = self.keyCleaner(v)
+        elif isinstance(d, (list, set, tuple)):
+            new = d.__class__(self.keyCleaner(v) for v in d)
+        else:
+            return d
+        return new
 
     def _get_token_metadata(self, token_id, utxo=None, retries=0):
         if token_id in invalid_token_ids: return {}
