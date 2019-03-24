@@ -35,7 +35,7 @@ html
             $("#lastPriceUSD").text('Price: $' + json.data[0].lastPriceUSD.toFixed(2));
             $("#lblConnections").text(json.data[0].connections + ' connections');
             $("#lblBlockcount").text(json.data[0].blockcount + ' blocks');
-            $("#lblBlocktime").text('block time: ' + json.data[0].blocktime.toFixed(2) + 's');
+            $("#lblBlocktime").text('avg block time: ' + json.data[0].blocktime.toFixed(2) + 's');
             $("#addressCount").text(json.data[0].address_count.toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
             $("#lblX1").text(' ');
           }});
