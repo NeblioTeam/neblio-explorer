@@ -35,7 +35,8 @@ html
             $("#lastPriceUSD").text('Price: $' + json.data[0].lastPriceUSD.toFixed(2));
             $("#lblConnections").text(json.data[0].connections + ' connections');
             $("#lblBlockcount").text(json.data[0].blockcount + ' blocks');
-            $("#blocktime").text(json.data[0].blocktime.toFixed(2) + ' seconds');
+            $("#blocktime").text('block time: ' + json.data[0].blocktime.toFixed(2) + 's');
+            $("#addressCount").text(json.data[0].address_count.toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
             $("#lblX1").text(' ');
           }});
         }
@@ -142,9 +143,9 @@ html
         .col-md-2.col-md-offset-1
           .panel.panel-default.hidden-sm.hidden-xs
             .panel-heading
-              strong Block Time
+              strong Active Addresses
             .panel-body
-              label#blocktime -
+              label#addressCount -
         .col-md-2
           .panel.panel-default.hidden-sm.hidden-xs
             .panel-heading
@@ -223,6 +224,7 @@ html
           li.text-center(style='margin-left:80px;margin-right:80px;')
             p(style='margin-top:15px;')
       span.connections
+        label#blocktime.label.label-default -
         label#lblBlockcount.label.label-default -
         label#lblConnections.label.label-default -
 
