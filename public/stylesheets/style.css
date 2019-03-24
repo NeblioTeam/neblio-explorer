@@ -10,7 +10,7 @@ body {
 
 .nav-search input {
 	width: 400px !important;
-	margin-right: 5px;	
+	margin-right: 5px;
 }
 
 .view_tx {
@@ -106,6 +106,10 @@ tr {
 }
 
 #lblBlockcount {
+	margin-right: 10px;
+}
+
+#lblBlocktime {
 	margin-right: 10px;
 }
 

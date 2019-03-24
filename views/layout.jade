@@ -35,7 +35,7 @@ html
             $("#lastPriceUSD").text('Price: $' + json.data[0].lastPriceUSD.toFixed(2));
             $("#lblConnections").text(json.data[0].connections + ' connections');
             $("#lblBlockcount").text(json.data[0].blockcount + ' blocks');
-            $("#blocktime").text('block time: ' + json.data[0].blocktime.toFixed(2) + 's');
+            $("#lblBlocktime").text('block time: ' + json.data[0].blocktime.toFixed(2) + 's');
             $("#addressCount").text(json.data[0].address_count.toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
             $("#lblX1").text(' ');
           }});
@@ -224,7 +224,7 @@ html
           li.text-center(style='margin-left:80px;margin-right:80px;')
             p(style='margin-top:15px;')
       span.connections
-        label#blocktime.label.label-default -
+        label#lblBlocktime.label.label-default -
         label#lblBlockcount.label.label-default -
         label#lblConnections.label.label-default -
 
