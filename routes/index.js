@@ -330,7 +330,7 @@ router.get('/ext/summary', function(req, res) {
               lib.get_blockhash(blockcount-2880, function(hash2) {
               	lib.get_block(hash2, function(block2) {
               	  var blocktime = (block1.time - block2.time)/2880;
-              	  db.count_addresses(function(address_count)) {
+              	  db.count_addresses(function(address_count) {
                     db.get_stats(settings.coin, function (stats) {
                       if (hashrate == 'There was an error. Check your console.') {
                         hashrate = 0;
