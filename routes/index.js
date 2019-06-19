@@ -1,6 +1,7 @@
 var express = require('express')
   , router = express.Router()
   , request = require('request')
+  , fs = require('fs')
   , settings = require('../lib/settings')
   , locale = require('../lib/locale')
   , db = require('../lib/database')
@@ -325,11 +326,27 @@ router.get('/ext/stats', function(req, res) {
     request({uri: "http://localhost:3003/24h_active_node_count", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, node_count) {
       db.count_addresses(function(address_count) {
   	    db.count_tokens(function(token_count) {
+  	      var github_lines_of_code = 0
+  	      var gh_loc_path = './data/github_loc.dat'
+  	      // try to get total lines counted
+          try {
+            if (fs.existsSync(gh_loc_path)) {
+              //file exists
+              try {
+                github_lines_of_code = fs.readFileSync(gh_loc_path, 'utf8');
+              } catch (err) {
+                console.error(err);
+              }
+            }
+          } catch(err) {
+            console.error(err)
+          }
           res.send({ data: [{
             active_address_count: address_count,
             issued_token_count: token_count,
             wallet_download_count: wallet_download_count,
-            active_node_count: node_count
+            active_node_count: node_count,
+            github_lines_of_code: github_lines_of_code
           }]});
         });
       });
