@@ -1,5 +1,6 @@
 var express = require('express')
   , router = express.Router()
+  , request = require('request')
   , settings = require('../lib/settings')
   , locale = require('../lib/locale')
   , db = require('../lib/database')
@@ -310,12 +311,16 @@ router.get('/qr/:string', function(req, res) {
 });
 
 router.get('/ext/stats', function(req, res) {
-  db.count_addresses(function(address_count) {
-  	db.count_tokens(function(token_count) {
-      res.send({ data: [{
-        address_count: address_count,
-        token_count: token_count
-      }]});
+  wallet_download_count = 0
+  request({uri: "https://api.github.com/repos/NeblioTeam/neblio/releases", json: true, timeout: 2000}, function (error, response, body) {
+    db.count_addresses(function(address_count) {
+  	  db.count_tokens(function(token_count) {
+        res.send({ data: [{
+          active_address_count: address_count,
+          issued_token_count: token_count,
+          wallet_download_count: body
+        }]});
+      });
     });
   });
 });
