@@ -317,7 +317,7 @@ router.get('/ext/stats', function(req, res) {
       if (body[x].assets && body[x].assets.length){
   	    for (var a = 0; a < body[x].assets.length; a++){
   	      if (body[x].assets[a].download_count && body[x].assets[a].download_count > 0){
-            wallet_download_count += asset.download_count
+            wallet_download_count += body[x].assets[a].download_count
           }
         }
       }
