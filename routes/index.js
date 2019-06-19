@@ -313,11 +313,15 @@ router.get('/qr/:string', function(req, res) {
 router.get('/ext/stats', function(req, res) {
   wallet_download_count = 0
   request({uri: "https://api.github.com/repos/NeblioTeam/neblio/releases", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, body) {
-  	for x in body:
-      if (x.assets && x.assets.length):
-  	    for asset in x.assets:
-  	      if (asset.download_count && asset.download_count > 0):
+  	for (var x = 0; x < body.length; x++){
+      if (body[x].assets && body[x].assets.length){
+  	    for (var a = 0; a < body[x].assets.length; a++){
+  	      if (body[x].assets[a].download_count && body[x].assets[a].download_count > 0){
             wallet_download_count += asset.download_count
+          }
+        }
+      }
+    }
     db.count_addresses(function(address_count) {
   	  db.count_tokens(function(token_count) {
         res.send({ data: [{
