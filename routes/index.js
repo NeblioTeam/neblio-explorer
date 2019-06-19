@@ -329,7 +329,7 @@ router.get('/ext/stats', function(req, res) {
             active_address_count: address_count,
             issued_token_count: token_count,
             wallet_download_count: wallet_download_count,
-            24h_active_node_count: node_count
+            active_node_count: node_count
           }]});
         });
       });
