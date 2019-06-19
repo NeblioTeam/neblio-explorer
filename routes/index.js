@@ -309,6 +309,17 @@ router.get('/qr/:string', function(req, res) {
   }
 });
 
+router.get('/ext/stats', function(req, res) {
+  db.count_addresses(function(address_count) {
+  	db.count_tokens(function(token_count) {
+      res.send({ data: [{
+        address_count: address_count,
+        token_count: token_count
+      }]});
+    });
+  });
+});
+
 router.get('/ext/summary', function(req, res) {
   lib.get_difficulty(function(difficulty) {
     difficultyHybrid = ''
