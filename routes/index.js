@@ -322,13 +322,16 @@ router.get('/ext/stats', function(req, res) {
         }
       }
     }
-    db.count_addresses(function(address_count) {
-  	  db.count_tokens(function(token_count) {
-        res.send({ data: [{
-          active_address_count: address_count,
-          issued_token_count: token_count,
-          wallet_download_count: wallet_download_count
-        }]});
+    request({uri: "localhost:3003/24h_active_node_count", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, node_count) {
+      db.count_addresses(function(address_count) {
+  	    db.count_tokens(function(token_count) {
+          res.send({ data: [{
+            active_address_count: address_count,
+            issued_token_count: token_count,
+            wallet_download_count: wallet_download_count,
+            24h_active_node_count: node_count
+          }]});
+        });
       });
     });
   });
