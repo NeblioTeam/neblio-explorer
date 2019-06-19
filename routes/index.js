@@ -322,7 +322,7 @@ router.get('/ext/stats', function(req, res) {
         }
       }
     }
-    request({uri: "localhost:3003/24h_active_node_count", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, node_count) {
+    request({uri: "http://localhost:3003/24h_active_node_count", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, node_count) {
       db.count_addresses(function(address_count) {
   	    db.count_tokens(function(token_count) {
           res.send({ data: [{
