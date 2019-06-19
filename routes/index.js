@@ -333,9 +333,9 @@ router.get('/ext/stats', function(req, res) {
             if (fs.existsSync(gh_loc_path)) {
               //file exists
               try {
-                github_lines_of_code = fs.readFileSync(gh_loc_path, 'utf8');
+                github_lines_of_code = fs.readFileSync(gh_loc_path, 'utf8').trim()
               } catch (err) {
-                console.error(err);
+                console.error(err)
               }
             }
           } catch(err) {
