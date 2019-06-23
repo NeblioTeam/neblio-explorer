@@ -312,6 +312,7 @@ router.get('/qr/:string', function(req, res) {
 });
 
 router.get('/ext/stats', function(req, res) {
+  // for testnet just get the active addresses and token counts
   if (settings.network == 'testnet') {
   	db.count_addresses(function(address_count) {
   	  db.count_tokens(function(token_count) {
@@ -321,43 +322,62 @@ router.get('/ext/stats', function(req, res) {
         }]});
       });
     });
+  // for mainnet get all of the stats, including adding in testnet token and address counts
   } else {
-    wallet_download_count = 0
-    request({uri: "https://api.github.com/repos/NeblioTeam/neblio/releases", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, body) {
-  	  for (var x = 0; x < body.length; x++){
-        if (body[x].assets && body[x].assets.length){
-  	      for (var a = 0; a < body[x].assets.length; a++){
-  	        if (body[x].assets[a].download_count && body[x].assets[a].download_count > 0){
-              wallet_download_count += body[x].assets[a].download_count
+    var wallet_download_count = 0
+    var address_count_testnet = 0
+    var token_count_testnet = 0
+    // grab data from testnet
+    request({uri: "https://testnet.explorer.nebl.io/ext/stats", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, body) {
+      address_count_testnet = body.data[0].active_address_count
+      token_count_testnet = body.data[0].issued_token_count
+      // get github download count
+      request({uri: "https://api.github.com/repos/NeblioTeam/neblio/releases", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, body) {
+  	    for (var x = 0; x < body.length; x++){
+          if (body[x].assets && body[x].assets.length){
+  	        for (var a = 0; a < body[x].assets.length; a++){
+  	          if (body[x].assets[a].download_count && body[x].assets[a].download_count > 0){
+                wallet_download_count += body[x].assets[a].download_count
+              }
             }
           }
         }
-      }
-      request({uri: "http://localhost:3003/24h_active_node_count", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, node_count) {
-        db.count_addresses(function(address_count) {
-  	      db.count_tokens(function(token_count) {
-  	        var github_lines_of_code = 0
-  	        var gh_loc_path = './data/github_loc.dat'
-  	        // try to get total lines counted
-            try {
-              if (fs.existsSync(gh_loc_path)) {
-                //file exists
-                try {
-                  github_lines_of_code = parseInt(fs.readFileSync(gh_loc_path, 'utf8').trim())
-                } catch (err) {
-                  console.error(err)
+        // get current active node count
+        request({uri: "http://localhost:3003/24h_active_node_count", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, node_count) {
+          db.count_addresses(function(address_count) {
+  	        db.count_tokens(function(token_count) {
+              // add testnet and mainnet to get total counts
+              var address_count_total = address_count + address_count_testnet
+              var token_count_total = token_count + token_count_testnet
+
+              // process github loc
+  	          var github_lines_of_code = 0
+  	          var gh_loc_path = './data/github_loc.dat'
+  	          // try to get total lines counted
+              try {
+                if (fs.existsSync(gh_loc_path)) {
+                  //file exists
+                  try {
+                    github_lines_of_code = parseInt(fs.readFileSync(gh_loc_path, 'utf8').trim())
+                  } catch (err) {
+                    console.error(err)
+                  }
                 }
+              } catch(err) {
+                console.error(err)
               }
-            } catch(err) {
-              console.error(err)
-            }
-            res.send({ data: [{
-              active_address_count: address_count,
-              issued_token_count: token_count,
-              wallet_download_count: wallet_download_count,
-              active_node_count: node_count,
-              github_lines_of_code: github_lines_of_code
-            }]});
+              res.send({ data: [{
+                active_address_count: address_count_total,
+                issued_token_count: token_count_total,
+                wallet_download_count: wallet_download_count,
+                active_node_count: node_count,
+                github_lines_of_code: github_lines_of_code,
+                active_address_count_mainnet: address_count,
+                issued_token_count_mainnet: token_count,
+                active_address_count_testnet: address_count_testnet,
+                issued_token_count_testnet: token_count_testnet
+              }]});
+            });
           });
         });
       });
