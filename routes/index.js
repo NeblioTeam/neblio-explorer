@@ -312,46 +312,57 @@ router.get('/qr/:string', function(req, res) {
 });
 
 router.get('/ext/stats', function(req, res) {
-  wallet_download_count = 0
-  request({uri: "https://api.github.com/repos/NeblioTeam/neblio/releases", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, body) {
-  	for (var x = 0; x < body.length; x++){
-      if (body[x].assets && body[x].assets.length){
-  	    for (var a = 0; a < body[x].assets.length; a++){
-  	      if (body[x].assets[a].download_count && body[x].assets[a].download_count > 0){
-            wallet_download_count += body[x].assets[a].download_count
+  if (settings.network == 'testnet') {
+  	db.count_addresses(function(address_count) {
+  	  db.count_tokens(function(token_count) {
+  	  	res.send({ data: [{
+          active_address_count: address_count,
+          issued_token_count: token_count
+        }]});
+      });
+    });
+  } else {
+    wallet_download_count = 0
+    request({uri: "https://api.github.com/repos/NeblioTeam/neblio/releases", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, body) {
+  	  for (var x = 0; x < body.length; x++){
+        if (body[x].assets && body[x].assets.length){
+  	      for (var a = 0; a < body[x].assets.length; a++){
+  	        if (body[x].assets[a].download_count && body[x].assets[a].download_count > 0){
+              wallet_download_count += body[x].assets[a].download_count
+            }
           }
         }
       }
-    }
-    request({uri: "http://localhost:3003/24h_active_node_count", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, node_count) {
-      db.count_addresses(function(address_count) {
-  	    db.count_tokens(function(token_count) {
-  	      var github_lines_of_code = 0
-  	      var gh_loc_path = './data/github_loc.dat'
-  	      // try to get total lines counted
-          try {
-            if (fs.existsSync(gh_loc_path)) {
-              //file exists
-              try {
-                github_lines_of_code = parseInt(fs.readFileSync(gh_loc_path, 'utf8').trim())
-              } catch (err) {
-                console.error(err)
+      request({uri: "http://localhost:3003/24h_active_node_count", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, node_count) {
+        db.count_addresses(function(address_count) {
+  	      db.count_tokens(function(token_count) {
+  	        var github_lines_of_code = 0
+  	        var gh_loc_path = './data/github_loc.dat'
+  	        // try to get total lines counted
+            try {
+              if (fs.existsSync(gh_loc_path)) {
+                //file exists
+                try {
+                  github_lines_of_code = parseInt(fs.readFileSync(gh_loc_path, 'utf8').trim())
+                } catch (err) {
+                  console.error(err)
+                }
               }
+            } catch(err) {
+              console.error(err)
             }
-          } catch(err) {
-            console.error(err)
-          }
-          res.send({ data: [{
-            active_address_count: address_count,
-            issued_token_count: token_count,
-            wallet_download_count: wallet_download_count,
-            active_node_count: node_count,
-            github_lines_of_code: github_lines_of_code
-          }]});
+            res.send({ data: [{
+              active_address_count: address_count,
+              issued_token_count: token_count,
+              wallet_download_count: wallet_download_count,
+              active_node_count: node_count,
+              github_lines_of_code: github_lines_of_code
+            }]});
+          });
         });
       });
     });
-  });
+  }
 });
 
 router.get('/ext/summary', function(req, res) {
