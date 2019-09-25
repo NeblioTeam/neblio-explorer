@@ -249,95 +249,75 @@ class Database(object):
             addrs = self._process_vin(vin, tx["txid"], addrs)
         return addrs
 
-    def update_token(self, token_id, retries=0):
+    def update_token(self, token_id, txid):
         if token_id in invalid_token_ids: return
-        if retries > 10: return
-        try:
-            data1 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id)
-            metadata = json.loads(data1.read())
-            metadata = self.keyCleaner(metadata) # remove '.' or '$' from keys
-            someUtxo = metadata.get("someUtxo", "")
-            #logger.info("Getting metdata for token: "+token_id)
-        except Exception as err:
-            logger.warning("RETRY: Error getting initial metadata: %s" % err)
-            logger.warning(token_id)
-            time.sleep(10)
-            retries += 1
-            self.update_token(token_id, retries)
-        finally:
-            try:
-                if data1: data1.close()
-            except NameError:
-                pass
-        if (someUtxo):
-            try:
-                #logger.info("At UTXO: "+someUtxo)
-                data2 = urllib.request.urlopen(ntp1_api_url + 'tokenmetadata/' + token_id + '/' + someUtxo)
-                metadata = json.loads(data2.read())
-                metadata = self.keyCleaner(metadata) # remove '.' or '$' from keys
-            except Exception as err:
-                logger.warning("RETRY: Error getting extended metadata: %s" % err)
-                logger.warning(token_id + "/" + someUtxo)
-                time.sleep(10)
-                retries += 1
-                self.update_token(token_id, retries)
-            finally:
-                try:
-                    if data2: data2.close()
-                except NameError:
-                    pass
-            # check for a firstBlock of -1
-            if (metadata.get("firstBlock", 0) < 0):
-                logger.warning("RETRY: Invalid first block in token metadata: %s" % err)
-                time.sleep(10)
-                retries += 1
-                self.update_token(token_id, retries)
-            # successfully got all metadata, insert/update it in the db
-            token = self.db.tokens.find_one({"t_id": token_id})
-            if token is None:
-                logger.info("Adding new token to the db: "+token_id)
-                self.db.tokens.insert_one(
-                    {
-                        "t_id": token_id,
-                        "meta_of_issuance": metadata.get("metadataOfIssuence", {}),
-                        "issuance_address": metadata.get("issueAddress", ""),
-                        "issuance_txid": metadata.get("issuanceTxid", ""),
-                        "first_block": metadata.get("firstBlock", 0),
-                        "num_burns": metadata.get("numOfBurns", 0),
-                        "num_issuance": metadata.get("numOfIssuance", 0),
-                        "num_transfers": metadata.get("numOfTransfers", 0),
-                        "num_holders": metadata.get("numOfHolders", 0),
-                        "total_supply": metadata.get("totalSupply", 0),
-                        "aggregation_policy": metadata.get("aggregationPolicy", ""),
-                        "lock_status": metadata.get("lockStatus", ""),
-                        "divisibility": metadata.get("divisibility", 0)
-                    }
-                )
-            else:
-                #logger.info("Updating token stats in the db: "+token_id)
-                self.db.tokens.update_one(
-                    {"t_id": token_id},
-                    {
-                        "$set": {
-                            "first_block": metadata.get("firstBlock", 0),
-                            "num_burns": metadata.get("numOfBurns", 0),
-                            "num_issuance": metadata.get("numOfIssuance", 0),
-                            "num_transfers": metadata.get("numOfTransfers", 0),
-                            "num_holders": metadata.get("numOfHolders", 0),
-                            "total_supply": metadata.get("totalSupply", 0)
-                        }
-                    }
-                )
+
+        # insert/update metadata in the db
+        token = self.db.tokens.find_one({"t_id": token_id})
+        if token is None:
+            tx = self.db.txes.find_one({"txid": txid})
+            logger.info("Adding new token to the db: "+token_id)
+            # build metadata of issuance
+            found = False
+            meta_of_issuance = {}
+            issuance_address = ""
+            issuance_txid = ""
+            first_block = 0
+            num_transfers = 0
+            total_supply = 0
+            aggregation_policy = ""
+            lock_status = ""
+            divisibility = 0
+            for vout in tx.get("vout", []):
+                for t in vout.get("tokens", []):
+                    if token_id == t.get("id", ""):
+                        found = True
+                        meta_of_issuance = t.get("meta", {})
+                        issuance_address = vout.get("addresses", "")
+                        issuance_txid = t.get("issueTxid", "")
+                        first_block = tx.get("blockindex", 0)
+                        # only locked supply is supported by the explorer right now
+                        if t.get("lockStatus", "") == "true":
+                            total_supply = t.get("amount", 0)
+                        aggregation_policy = t.get("aggregationPolicy", "")
+                        lock_status = t.get("lockStatus", "")
+                        divisibility = t.get("divisibility", 0)
+                        break
+                    if found:
+                        break
+                if found:
+                    break
+
+
+            self.db.tokens.insert_one(
+                {
+                    "t_id": token_id,
+                    "meta_of_issuance": meta_of_issuance,
+                    "issuance_address": issuance_address,
+                    "issuance_txid": issuance_txid,
+                    "first_block": first_block,
+                    "num_transfers": num_transfers,
+                    "total_supply": total_supply,
+                    "aggregation_policy": aggregation_policy,
+                    "lock_status": lock_status,
+                    "divisibility": divisibility
+                }
+            )
         else:
-            logger.warning("RETRY: No UTXO, cannot update token in db for: "+token_id)
-            time.sleep(10)
-            retries += 1
-            self.update_token(token_id, retries)
+            #logger.info("Updating token stats in the db: "+token_id)
+            self.db.tokens.update_one(
+                {"t_id": token_id},
+                {
+                    "$inc": {
+                        "num_transfers": 1
+                    }
+                }
+            )
 
     def add_metadata_utxo_to_token(self, token_id, txid):
         token = self.db.tokens.find_one({"t_id": token_id})
         if token is None:
-            self.update_token(token_id)
+            self.update_token(token_id, txid)
             token = self.db.tokens.find_one({"t_id": token_id})
         tx = self.db.txes.find_one({"txid": txid})
         metadata_size = 0
@@ -401,7 +381,7 @@ class Database(object):
                             addr_token["sent"] =  addr_token.get("sent", 0) + tx_token.get("sent", 0)
                             addr_token["received"] = addr_token.get("received", 0) + tx_token.get("received", 0)
                             addr_token["amount"] = addr_token["received"] - addr_token["sent"]
-                            self.update_token(tx_token["id"]);
+                            # self.update_token(tx_token["id"]);
                             token_exists = True
                             break
                     if not token_exists:
@@ -412,7 +392,7 @@ class Database(object):
                         addr_token["amount"] = addr_token["received"] - addr_token["sent"]
                         addr_token["meta"] = tx_token["meta"]
                         addr_tokens.append(addr_token)
-                        self.update_token(tx_token["id"]);
+                        # self.update_token(tx_token["id"]);
 
                 self.db.addresses.update_one(
                     {"a_id": addr},
@@ -435,7 +415,7 @@ class Database(object):
                     addr_token["amount"] = addr_token["received"] - addr_token["sent"]
                     addr_token["meta"] = tx_token["meta"]
                     addr_tokens.append(addr_token)
-                    self.update_token(tx_token["id"]);
+                    # self.update_token(tx_token["id"]);
                 sent = addrs[addr].get("sent", 0)
                 received = addrs[addr].get("received", 0)
                 txs = addrs[addr].get("txs", [])
@@ -735,9 +715,8 @@ class Tx(object):
 
             details = self._get_input_details(tx.input())
             for t in details["tokens"]:
-                tx_meta = self._get_token_metadata(t["id"])
-                if tx_meta is not None:
-                    tx_meta_of_iss = tx_meta.get("metadataOfIssuence", {})
+                tx_meta_of_iss = t.get("metadataOfIssuance", {})
+                if tx_meta_of_iss is not None:
                     tx_meta_data = tx_meta_of_iss.get("data", {})
                     t["meta"] = tx_meta_data
                 else:
@@ -778,11 +757,6 @@ class Tx(object):
 
         addrs = {}
 
-        # All token outputs in a transaction have the same metadata at each
-        # token output. To speed up syncing, check for metadata on the first
-        # token output of the transction and save it here. Skipping subsequent
-        # API calls.
-        tx_meta_of_utxo = None
         for i in vout:
             if self._output_is_valid(i) is False:
                 continue
@@ -797,21 +771,16 @@ class Tx(object):
             for t in vout_tokens:
                 # explorer expects id, not tokenId
                 t["id"] = t.pop("tokenId")
-                tx_meta = None
-                if tx_meta_of_utxo is None:
-                    utxo = txid+":"+str(i.get("n", 0))
-                    tx_meta = self._get_token_metadata(t["id"], utxo)
-                else:
-                    tx_meta = self._get_token_metadata(t["id"])
-                if tx_meta is not None:
-                    tx_meta_of_iss = tx_meta.get("metadataOfIssuence", {})
+                tx_meta_of_iss = t.get("metadataOfIssuance", {})
+                if tx_meta_of_iss is not None:
                     tx_meta_data = tx_meta_of_iss.get("data", {})
                     t["meta"] = tx_meta_data
-                    if tx_meta_of_utxo is None:
-                        tx_meta_of_utxo = tx_meta.get("metadataOfUtxo", {})
-                    t["meta_of_utxo"] = tx_meta_of_utxo
                 else:
                     t["meta"] = {}
+                tx_meta_of_utxo = self._tx.get("metadataOfUtxos", {})
+                t["meta_of_utxo"] = tx_meta_of_utxo
+
+
             if addrs.get(addr):
                 addrs[addr]["amount"] += int(i["value"] * NUM_UNITS)
                 addrs[addr]["tokens"].extend(vout_tokens)

@@ -15,69 +15,57 @@ block content
               table.table.table-bordered.table-striped.summary-table
                 tr
                   td
-                    strong Token ID: 
+                    strong Token ID:
                     | #{token.t_id}
                 tr
                   td
-                    strong Issuer: 
+                    strong Issuer:
                     | #{token.meta_of_issuance.data.issuer}
                 tr
                   td
-                    strong Total Token Supply: 
+                    strong Total Token Supply:
                     | #{token.total_supply}
                 tr
                   td
-                    strong Description: 
+                    strong Description:
                     | #{token.meta_of_issuance.data.description}
                 tr
                   td
-                    strong Issuance Address: 
+                    strong Issuance Address:
                     | #[a(href='/address/#{token.issuance_address}') #{token.issuance_address}]
                 tr
                   td
-                    strong Issuance Txid: 
+                    strong Issuance Txid:
                     | #[a(href='/tx/#{token.issuance_txid}') #{token.issuance_txid}]
                 tr
                   td
-                    strong Metadata of Issuance: 
+                    strong Metadata of Issuance:
                     if (token.meta_of_issuance && token.meta_of_issuance.data && token.meta_of_issuance.data.userData && token.meta_of_issuance.data.userData.meta && token.meta_of_issuance.data.userData.meta.length > 0)
                       each d in token.meta_of_issuance.data.userData.meta
                         <br>
-                        strong &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- #{d.key}: 
+                        strong &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- #{d.key}:
                         | #{d.value}
                     else
                       | none
                 tr
                   td
-                    strong Issuance Block Height: 
+                    strong Issuance Block Height:
                     | #{token.first_block}
                 tr
                   td
-                    strong Locked: (No more tokens can be issued) 
+                    strong Locked: (No more tokens can be issued)
                     | #{token.lock_status}
                 tr
                   td
-                    strong Divisibility: 
+                    strong Divisibility:
                     | #{token.divisibility}
                 tr
                   td
-                    strong Aggregation Policy: 
+                    strong Aggregation Policy:
                     | #{token.aggregation_policy}
                 tr
                   td
-                    strong Number of Issuances: 
-                    | #{token.num_issuance}
-                tr
-                  td
-                    strong Number of Burns: 
-                    | #{token.num_burns}
-                tr
-                  td
-                    strong Number of Token Holders: 
-                    | #{token.num_holders}
-                tr
-                  td
-                    strong Number of Transactions: 
+                    strong Number of Transactions:
                     | #{token.num_transfers}
             td(style="vertical-align:middle;")
               center
