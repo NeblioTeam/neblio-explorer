@@ -272,12 +272,12 @@ class Database(object):
                 for t in vout.get("tokens", []):
                     if token_id == t.get("id", ""):
                         found = True
-                        meta_of_issuance = t.get("meta", {})
+                        meta_of_issuance["data"] = t.get("meta", {})
                         issuance_address = vout.get("addresses", "")
                         issuance_txid = t.get("issueTxid", "")
                         first_block = tx.get("blockindex", 0)
                         # only locked supply is supported by the explorer right now
-                        if t.get("lockStatus", "") == "true":
+                        if t.get("lockStatus", "") == True:
                             total_supply = t.get("amount", 0)
                         aggregation_policy = t.get("aggregationPolicy", "")
                         lock_status = t.get("lockStatus", "")
