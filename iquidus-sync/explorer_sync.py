@@ -304,7 +304,7 @@ class Database(object):
                 }
             )
         else:
-            logger.info("Updating token stats in the db: "+token_id)
+            #logger.info("Updating token stats in the db: "+token_id)
             self.db.tokens.update_one(
                 {"t_id": token_id},
                 {
