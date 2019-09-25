@@ -304,7 +304,7 @@ class Database(object):
                 }
             )
         else:
-            #logger.info("Updating token stats in the db: "+token_id)
+            logger.info("Updating token stats in the db: "+token_id)
             self.db.tokens.update_one(
                 {"t_id": token_id},
                 {
@@ -315,10 +315,8 @@ class Database(object):
             )
 
     def add_metadata_utxo_to_token(self, token_id, txid):
+        self.update_token(token_id, txid)
         token = self.db.tokens.find_one({"t_id": token_id})
-        if token is None:
-            self.update_token(token_id, txid)
-            token = self.db.tokens.find_one({"t_id": token_id})
         tx = self.db.txes.find_one({"txid": txid})
         metadata_size = 0
         serialized_metadata = ''
