@@ -11,7 +11,7 @@ import shutil
 import subprocess
 import time
 import pprint
-import urllib.request, json
+import urllib.request
 import zlib
 
 from bitcoinrpc.authproxy import AuthServiceProxy
@@ -482,6 +482,9 @@ class Database(object):
         self.db.blocks.delete_many({"hash": blockhash})
 
     def update_transactions(self, transactions):
+        # convert to json and back to serialize all objs
+        transactions = json.dumps(transactions)
+        transactions = json.loads(transactions)
         self.db.txes.insert_many(transactions)
 
     def update_richlist(self):
