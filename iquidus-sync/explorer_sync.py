@@ -485,6 +485,7 @@ class Database(object):
         # convert to json and back to serialize all objs
         transactions = json.dumps(transactions)
         transactions = json.loads(transactions)
+        transactions = self.keyCleaner(transactions)
         self.db.txes.insert_many(transactions)
 
     def update_richlist(self):
