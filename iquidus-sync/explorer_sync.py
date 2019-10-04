@@ -323,7 +323,10 @@ class Database(object):
         for out in tx.get("vout", []):
             for out_token in out.get("tokens", {}):
                 if out_token.get("id", "") == token_id:
-                    serialized_metadata = json.dumps(out_token.get("meta_of_utxo", {}),separators=(',', ':'))
+                    meta_of_utxo = out_token.get("meta_of_utxo", {})
+                    if meta_of_utxo is None:
+                        return
+                    serialized_metadata = json.dumps(meta_of_utxo,separators=(',', ':'))
                     metadata_size = len(serialized_metadata.encode())
                     if metadata_size > 2: # {} null object
                         break
