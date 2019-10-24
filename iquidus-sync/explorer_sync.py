@@ -275,6 +275,12 @@ class Database(object):
                         meta_of_issuance["data"] = t.get("meta", {})
                         issuance_address = vout.get("addresses", "")
                         issuance_txid = t.get("issueTxid", "")
+                        if issuance_txid != txid:
+                            logger.warning("Issuance TXID Does not Match first txn token was seen!")
+                            logger.warning("Token ID: " + token_id)
+                            logger.warning("Issuance TXID: " + issuance_txid)
+                            logger.warning("This TXID: " + txid)
+                            logger.warning("This Amount: " + t.get("amount", 0))
                         first_block = tx.get("blockindex", 0)
                         # only locked supply is supported by the explorer right now
                         if t.get("lockStatus", "") == True:
