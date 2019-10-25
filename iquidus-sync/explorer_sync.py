@@ -276,7 +276,7 @@ class Database(object):
                         issuance_address = vout.get("addresses", "")
                         issuance_txid = t.get("issueTxid", "")
                         if issuance_txid != txid:
-                            logger.warning("Issuance TXID Does not Match first txn token was seen!")
+                            logger.warning("Issuance TXID does not match first txn token was seen!")
                             logger.warning("Token ID: " + token_id)
                             logger.warning("Issuance TXID: " + issuance_txid)
                             logger.warning("This TXID: " + txid)
@@ -323,6 +323,9 @@ class Database(object):
     def add_metadata_utxo_to_token(self, token_id, txid):
         self.update_token(token_id, txid)
         token = self.db.tokens.find_one({"t_id": token_id})
+        if token is None:
+            self.update_token(token_id, txid)
+            token = self.db.tokens.find_one({"t_id": token_id})
         tx = self.db.txes.find_one({"txid": txid})
         metadata_size = 0
         serialized_metadata = ''
@@ -345,7 +348,14 @@ class Database(object):
                 "timestamp": tx.get("timestamp", 0),
                 "metadata_size": metadata_size,
                 "metadata_size_comp": len(z)}
-        utxos = token.get("metadata_utxos", [])
+        utxos = []
+        if token is not None:
+            utxos = token.get("metadata_utxos", [])
+        else:
+            # token is None, add debug logging
+            logger.warn("Token not found in add_metadata_utxo_to_token")
+            logger.warn("TokenID: " + token_id)
+            logger.warn("TXID: " + txid)
         if utxo in utxos:
             return
         else:
