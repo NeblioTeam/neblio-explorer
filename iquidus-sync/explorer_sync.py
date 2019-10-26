@@ -321,6 +321,7 @@ class Database(object):
             )
 
     def add_metadata_utxo_to_token(self, token_id, txid):
+        if token_id in invalid_token_ids: return
         self.update_token(token_id, txid)
         token = self.db.tokens.find_one({"t_id": token_id})
         if token is None:
