@@ -409,6 +409,7 @@ class Database(object):
                         addr_token["received"] = tx_token.get("received", 0)
                         addr_token["amount"] = addr_token["received"] - addr_token["sent"]
                         addr_token["meta"] = tx_token["meta"]
+                        addr_token = self.keyCleaner(addr_token)
                         addr_tokens.append(addr_token)
                         # self.update_token(tx_token["id"]);
 
@@ -432,6 +433,7 @@ class Database(object):
                     addr_token["received"] = tx_token.get("received", 0)
                     addr_token["amount"] = addr_token["received"] - addr_token["sent"]
                     addr_token["meta"] = tx_token["meta"]
+                    addr_token = self.keyCleaner(addr_token)
                     addr_tokens.append(addr_token)
                     # self.update_token(tx_token["id"]);
                 sent = addrs[addr].get("sent", 0)
