@@ -42,9 +42,15 @@ block content
                     strong Metadata of Issuance: 
                     if (token.meta_of_issuance && token.meta_of_issuance.data && token.meta_of_issuance.data.userData && token.meta_of_issuance.data.userData.meta && token.meta_of_issuance.data.userData.meta.length > 0)
                       each d in token.meta_of_issuance.data.userData.meta
-                        <br>
-                        strong &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- #{d.key}:
-                        | #{d.value}
+                        if (d.key)
+                          <br>
+                          strong &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- #{d.key}: 
+                          | #{d.value}
+                        else
+                          - for(var prop in d)
+                            <br>
+                            strong &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- #{prop}: 
+                            | #{d[prop]}
                     else
                       | none
                 tr
