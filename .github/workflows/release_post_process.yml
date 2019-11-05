@@ -12,5 +12,4 @@ jobs:
     - uses: actions/checkout@v1
     - name: Post Process New Release
       run: |
-        cd neblio-explorer
         python3 ./tmp/release_post_processing.py
