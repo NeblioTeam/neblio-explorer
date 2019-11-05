@@ -4,7 +4,7 @@ import requests
 import hashlib
 import time
 
-gh = github3.login(token=os.environ['GITHUB_AT'])
+gh = github3.login(token=os.environ['GITHUB_TOKEN'])
 
 repo = gh.repository('NeblioTeam', 'neblio')
 
