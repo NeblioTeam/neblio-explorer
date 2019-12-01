@@ -328,7 +328,7 @@ router.get('/ext/stats', function(req, res) {
     var address_count_testnet = 0
     var token_count_testnet = 0
     // grab data from testnet
-    request({uri: "https://testnet.explorer.nebl.io/ext/stats", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, body) {
+    request({uri: "https://testnet-explorer.nebl.io/ext/stats", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, body) {
       address_count_testnet = body.data[0].active_address_count
       token_count_testnet = body.data[0].issued_token_count
       // get github download count
