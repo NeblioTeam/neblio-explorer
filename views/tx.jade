@@ -156,6 +156,12 @@ block content
                         tr
                           td #{prop}
                           td #{m[prop]}
+            if (t.meta_of_utxo && t.meta_of_utxo.SourcePubKeyHex && t.meta_of_utxo.TargetPubKeyHex && t.meta_of_utxo.Cipher64)
+              - has_meta = true
+              table.table.table-bordered.table-striped.summary-table
+                thead
+                  tr
+                    th NTP1 Encrypted Metadata Found
         if (has_meta)
           - break
       if (!has_meta)
