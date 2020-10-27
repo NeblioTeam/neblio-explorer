@@ -7,7 +7,7 @@ block content
       | #{tx.txid}
     .panel.panel-default
       .panel-heading.hidden-xs
-        strong #{settings.symbol} txid: #{tx.is_cold_stake}
+        strong #{settings.symbol} txid: #{tx.txid}
         a(href='/api/getrawtransaction?txid=#{tx.txid}&decrypt=1')
           span.glyphicon.glyphicon-info-sign.iquidus.pull-right
       table.table.table-bordered.table-striped.summary-table
@@ -98,8 +98,12 @@ block content
                                 | #{t.amount} #[a(href='/token/#{t.id}') #{display_token_name(t)}] #[img.image(src='#{display_token_icon(t)}' height="20px")]
                                 br
                 else
-                  tr.info(style='text-align:center')
-                    td #{settings.locale.proof_of_stake}
+                  if (tx.is_cold_stake)
+                    tr.primary(style='text-align:center;background-color:rgba(60, 161, 207, 0.5)')
+                      td #{settings.locale.cold_proof_of_stake}
+                  else
+                    tr.info(style='text-align:center')
+                      td #{settings.locale.proof_of_stake}
         .col-md-6
           .panel.panel-default
             .panel-heading
