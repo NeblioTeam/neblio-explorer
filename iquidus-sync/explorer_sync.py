@@ -701,7 +701,7 @@ class Tx(object):
                 type = scrypt.get("type", "")
                 addr_index = 0
                 if type == "coldstake":
-                	addr_index = 1
+                    addr_index = 1
                 if addr is None:
                     addr = ["no address could be decoded",]
                 # explorer expects id, not tokenId
@@ -782,8 +782,8 @@ class Tx(object):
             addr_index = 0
             type = vout[0]["scriptPubKey"].get("type", "")
             if type == "coldstake":
-            	addr_index = 1
-            	is_cold_stake = True
+                addr_index = 1
+                is_cold_stake = True
             addr = vout[0]["scriptPubKey"].get("addresses", [""])[addr_index]
             vin = self.inputs()
             if len(vin):
@@ -799,8 +799,8 @@ class Tx(object):
             type = script.get("type", "")
             addr_index = 0
             if type == "coldstake":
-            	addr_index = 1
-            	is_cold_stake = True
+                addr_index = 1
+                is_cold_stake = True
             if addresses is None:
                 addr = "no address could be decoded"
             else:
@@ -884,7 +884,7 @@ class Tx(object):
             if i.get("is_stake") is not None:
                 del i["is_stake"]
             if i.get("is_cold_stake") is not None:
-            	is_cold_stake = True
+                is_cold_stake = True
                 del i["is_cold_stake"]
         ret = {
             "vin": ins,
@@ -1000,7 +1000,7 @@ class Daemon(object):
             for o in details.get("vout", []):
                 if (len(o["tokens"]) > 0):
                     has_token = True
-                	break
+                    break
             for i in details.get("vin", []):
                 if (len(i["tokens"]) > 0):
                     has_token = True
