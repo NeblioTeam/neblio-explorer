@@ -698,6 +698,10 @@ class Tx(object):
                 if scrypt is None:
                     return
                 addr = scrypt.get("addresses")
+                type = scrypt.get("type", "")
+                addr_index = 0
+                if type == "coldstake":
+                	addr_index = 1
                 if addr is None:
                     addr = ["no address could be decoded",]
                 # explorer expects id, not tokenId
@@ -705,7 +709,7 @@ class Tx(object):
                 for t in tokens:
                     t["id"] = t.pop("tokenId")
                 return {
-                    "addresses": addr[0],
+                    "addresses": addr[addr_index],
                     "amount": int(i["value"] * NUM_UNITS),
                     "tokens": tokens,
                 }
@@ -769,12 +773,17 @@ class Tx(object):
 
         is_nonstandard = tx["scriptPubKey"]["type"] == "nonstandard"
         is_stake = False
+        is_cold_stake = False
 
         if is_nonstandard:
             vout.pop(0)
             if len(vout) == 0:
                 return ret
-            addr = vout[0]["scriptPubKey"].get("addresses", [""])[0]
+            addr_index = 0
+            type = vout[0]["scriptPubKey"].get("type", "")
+            if type == "coldstake":
+            	addr_index = 1
+            addr = vout[0]["scriptPubKey"].get("addresses", [""])[addr_index]
             vin = self.inputs()
             if len(vin):
                 is_stake = addr == vin[0]["addresses"]
@@ -786,10 +795,15 @@ class Tx(object):
                 continue
             script = i.get("scriptPubKey", {})
             addresses = script.get("addresses")
+            type = script.get("type", "")
+            addr_index = 0
+            if type == "coldstake":
+            	addr_index = 1
+            	is_cold_stake = True
             if addresses is None:
                 addr = "no address could be decoded"
             else:
-                addr = addresses[0]
+                addr = addresses[addr_index]
 
             vout_tokens = i.get("tokens", [])
             for t in vout_tokens:
@@ -831,6 +845,7 @@ class Tx(object):
                     "tokens": addrs[addr]["tokens"],
                     #"type": script.get("type"),
                     "is_stake": is_stake,
+                    "is_cold_stake": is_cold_stake,
                 }
             )
         self._vout = ret
@@ -866,6 +881,8 @@ class Tx(object):
         for i in outs:
             if i.get("is_stake") is not None:
                 del i["is_stake"]
+            if i.get("is_cold_stake") is not None:
+                del i["is_cold_stake"]
         ret = {
             "vin": ins,
             "vout": outs,
