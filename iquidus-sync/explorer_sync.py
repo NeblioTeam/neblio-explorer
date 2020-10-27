@@ -884,8 +884,7 @@ class Tx(object):
             if i.get("is_stake") is not None:
                 del i["is_stake"]
             if i.get("is_cold_stake") is not None:
-                logger.info("Found cold stake output: "+json.dumps(i))
-                is_cold_stake = True
+                is_cold_stake = i["is_cold_stake"]
                 del i["is_cold_stake"]
         ret = {
             "vin": ins,
