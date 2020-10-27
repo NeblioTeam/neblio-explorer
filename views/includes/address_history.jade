@@ -2,24 +2,26 @@ thead
   tr
     th.hidden-xs #{settings.locale.timestamp}
     th.hidden-xs #{settings.locale.tx_hash}
-    th #{settings.locale.tokens}
+    th #{settings.locale.info}
     th #{settings.locale.mkt_amount} (#{settings.symbol})
 tbody
   each tx in txs
     - var time = format_unixtime(tx.timestamp)
     tr
-      td.hidden-xs #{time} 
+      td.hidden-xs #{time}
       td.hidden-xs
         a(href='/tx/#{tx.txid}') #{tx.txid}
       - var done = false
       - var out = 0
       - var vin = 0
-      each r in tx.vout 
+      each r in tx.vout
         if r.addresses == address.a_id
           - out = r.amount
       td.text-center
        if tx.has_token
          <span class='fas fa-coins'></span>
+       if tx.is_cold_staking
+         <span class='far fa-snowflake'></span>
       each s in tx.vin
         if s.addresses == address.a_id
           - vin = s.amount
