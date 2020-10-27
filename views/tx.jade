@@ -89,6 +89,9 @@ block content
                               br
                       tr.hidden-lg.hidden-md
                           td.danger #{ramount.toFixed(8)} #{settings.symbol}
+                            if (tx.is_cold_stake)
+                              br
+                              <span class='far fa-snowflake'></span> Cold Staking <span class='far fa-snowflake'></span>
                             if (tx.has_token && r.tokens)
                               br
                               each t in sorted_tokens
