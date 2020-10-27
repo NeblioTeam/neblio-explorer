@@ -7,7 +7,7 @@ block content
       | #{tx.txid}
     .panel.panel-default
       .panel-heading.hidden-xs
-        strong #{settings.symbol} txid: #{tx.txid}
+        strong #{settings.symbol} txid: #{tx.is_cold_stake}
         a(href='/api/getrawtransaction?txid=#{tx.txid}&decrypt=1')
           span.glyphicon.glyphicon-info-sign.iquidus.pull-right
       table.table.table-bordered.table-striped.summary-table
@@ -120,9 +120,6 @@ block content
                       if (tx.has_token && r.tokens)
                         - var sorted_tokens = sort_tokens(r.tokens)
                       td.success.hidden-sm  #{ramount.toFixed(8)} #{settings.symbol}
-                        if (tx.is_cold_stake)
-                            br
-                            <span class='far fa-snowflake'></span> Cold Staking <span class='far fa-snowflake'></span>
                         if (tx.has_token && r.tokens)
                             br
                             each t in sorted_tokens
@@ -130,9 +127,6 @@ block content
                               br
                     tr.hidden-lg.hidden-md
                       td.success #{ramount.toFixed(8)} #{settings.symbol}
-                        if (tx.is_cold_stake)
-                            br
-                            <span class='far fa-snowflake'></span> Cold Staking <span class='far fa-snowflake'></span>
                         if (tx.has_token && r.tokens)
                           br
                           each t in sorted_tokens
