@@ -20,7 +20,7 @@ tbody
       td.text-center
        if tx.has_token
          <span class='fas fa-coins'></span>
-       if tx.is_cold_staking
+       if tx.is_cold_stake
          <span class='far fa-snowflake'></span>
       each s in tx.vin
         if s.addresses == address.a_id

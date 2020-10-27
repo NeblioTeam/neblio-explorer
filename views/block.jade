@@ -94,7 +94,7 @@ block content
                 td.text-center
                   if txn.has_token
                     <span class='fas fa-coins'></span>
-                  if txn.is_cold_staking
+                  if txn.is_cold_stake
                     <span class='far fa-snowflake'></span>
                 if txn.vout.length > 0
                   - var total = txn.total / 100000000
