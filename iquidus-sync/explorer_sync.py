@@ -773,7 +773,6 @@ class Tx(object):
 
         is_nonstandard = tx["scriptPubKey"]["type"] == "nonstandard"
         is_stake = False
-        is_cold_stake = False
 
         if is_nonstandard:
             vout.pop(0)
@@ -799,7 +798,6 @@ class Tx(object):
             addr_index = 0
             if type == "coldstake":
             	addr_index = 1
-            	is_cold_stake = True
             if addresses is None:
                 addr = "no address could be decoded"
             else:
@@ -845,7 +843,6 @@ class Tx(object):
                     "tokens": addrs[addr]["tokens"],
                     #"type": script.get("type"),
                     "is_stake": is_stake,
-                    "is_cold_stake": is_cold_stake,
                 }
             )
         self._vout = ret
@@ -881,8 +878,6 @@ class Tx(object):
         for i in outs:
             if i.get("is_stake") is not None:
                 del i["is_stake"]
-            if i.get("is_cold_stake") is not None:
-                del i["is_cold_stake"]
         ret = {
             "vin": ins,
             "vout": outs,
@@ -993,10 +988,14 @@ class Daemon(object):
             tpayTx = Tx(tx, self, blk["height"], blk["time"])
             details = tpayTx.details()
             has_token = False
+            is_cold_stake = False
             for o in details.get("vout", []):
                 if (len(o["tokens"]) > 0):
                     has_token = True
-                    break
+                spk = o.get("scriptPubKey", {})
+                type = spk.get("type", "")
+                if type == "coldstake":
+                	is_cold_stake = True
             for i in details.get("vin", []):
                 if (len(i["tokens"]) > 0):
                     has_token = True
@@ -1007,6 +1006,7 @@ class Daemon(object):
                 "blockindex" : blk["height"],
                 "timestamp" : details["timestamp"],
                 "has_token" : has_token,
+                "is_cold_stake" : is_cold_stake,
                 "total" : details["total"],
                 "vout" : details["vout"],
                 "vin" : details["vin"],
