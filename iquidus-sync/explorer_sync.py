@@ -1058,9 +1058,14 @@ class Daemon(object):
 
         self._db.db.blocks.remove({})
         toInsert = []
+        next_block_hash = None
 
         for i in range(start_block, last_height + 1):
-            block = self.get_block_at_height(i)
+            if next_block_hash is not None:
+                block = self.get_block(next_block_hash)
+            else:
+                block = self.get_block_at_height(i)
+            next_block_hash = block.get("nextblockhash", None)
             toInsert.append(self._prepare_block(block))
             if len(toInsert) >= 1000 or i == last_height:
                 # flush to db
@@ -1088,6 +1093,7 @@ class Daemon(object):
         diff = int(chain_height) - int(stats["last"])
         last_blk = self._db.get_last_recorded_block()
         last_height = stats["last"]
+        next_block_hash = None
         if last_height > (chain_height - 100):
             initial_sync_done = True
         logger.info("Last height is %d" % last_height)
@@ -1105,8 +1111,13 @@ class Daemon(object):
         total_blks = 0
         total_txes = 0
         while last_height <= chain_height:
-            blk = self.get_block_at_height(last_height)
+            if next_block_hash is not None:
+                blk = self.get_block(next_block_hash)
+            else:
+                blk = self.get_block_at_height(last_height)
             prev_blk = blk.get("previousblockhash")
+            next_block_hash = blk.get("nextblockhash", None)
+            logger.info("Next Block Hash: %s" % next_block_hash)
             if last_blk and last_blk["hash"] != prev_blk:
                 # chain reorg detected
                 logger.info(
