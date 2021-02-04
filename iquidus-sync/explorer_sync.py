@@ -1117,7 +1117,6 @@ class Daemon(object):
                 blk = self.get_block_at_height(last_height)
             prev_blk = blk.get("previousblockhash")
             next_block_hash = blk.get("nextblockhash", None)
-            logger.info("Next Block Hash: %s" % next_block_hash)
             if last_blk and last_blk["hash"] != prev_blk:
                 # chain reorg detected
                 logger.info(
