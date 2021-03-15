@@ -361,6 +361,9 @@ class Database(object):
             return
         else:
             utxos.append(utxo)
+            # limit utxo array size to 5000
+            if len(utxos) > 5000:
+            	utxos = utxos[-5000:]
             self.db.tokens.update_one(
                 {"t_id": token_id},
                 {

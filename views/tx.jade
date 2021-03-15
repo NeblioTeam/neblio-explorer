@@ -165,8 +165,8 @@ block content
                       - has_meta = true
                       - for(var prop in m)
                         tr
-                          td #{prop}
-                          td #{m[prop]}
+                          td(style='word-break:break-word;') #{prop}
+                          td(style='word-break:break-word;') #{m[prop]}
             if (t.meta_of_utxo && t.meta_of_utxo.SourcePubKeyHex && t.meta_of_utxo.TargetPubKeyHex && t.meta_of_utxo.Cipher64)
               - has_meta = true
               table.table.table-bordered.table-striped.summary-table
