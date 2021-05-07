@@ -13,6 +13,7 @@ import time
 import pprint
 import urllib.request
 import zlib
+import sys
 
 from bitcoinrpc.authproxy import AuthServiceProxy
 from configobj import ConfigObj
@@ -939,9 +940,10 @@ class Daemon(object):
             ret = meth(*args)
             self._retried = False
             return ret
-        except Exception:
+        except Exception as e:
             if retried:
-                raise
+                print(e)
+                sys.exit(1)
             self._retried = True
             self._conn = AuthServiceProxy(self._url)
             return self.call_method(method, *args)
