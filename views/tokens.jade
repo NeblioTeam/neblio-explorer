@@ -19,12 +19,12 @@ block content
               tr
                 td
                   #[img.image(src='#{display_token_icon(t)}' height="20px")] #[a(href='/token/#{t.t_id}') #{t.meta_of_issuance.data.tokenName}]
-                if (t.meta_of_issuance.data.description && t.meta_of_issuance.data.description.length > 15)
-                  td #{t.meta_of_issuance.data.description.substr(0,15)}
+                if (t.meta_of_issuance.data.description && t.meta_of_issuance.data.description.length > 16)
+                  td #{t.meta_of_issuance.data.description.substr(0,16)}
                 else
                   td #{t.meta_of_issuance.data.description}
-                if (t.meta_of_issuance.data.issuer && t.meta_of_issuance.data.issuer.length > 15)
-                  td #{t.meta_of_issuance.data.issuer.substr(0,15)}
+                if (t.meta_of_issuance.data.issuer && t.meta_of_issuance.data.issuer.length > 16)
+                  td #{t.meta_of_issuance.data.issuer.substr(0,16)}
                 else
                   td #{t.meta_of_issuance.data.issuer}
                 td
