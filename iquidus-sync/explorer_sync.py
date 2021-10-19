@@ -1051,6 +1051,27 @@ class Daemon(object):
         return transactions
 
     def get_block_vote(self, blk):
+
+        # get staker addr
+        txs = blk.get("tx", None)
+        logger.info("tx " + str(txs))
+        if txs is not None and len(txs) > 1:
+            stake_vout = txs[1].get("vout", None)
+            logger.info("stake_vout " + str(stake_vout))
+            if stake_vout is not None and len(stake_vout) > 1:
+                spk = stake_vout[1].get("scriptPubKey", None)
+                logger.info("spk " + str(spk))
+                addr_index = 0
+                if spk is not None:
+                    spk_type = spk.get("type", None)
+                    logger.info("spk_type " + str(spk_type))
+                    if spk_type == "coldstake":
+                        addr_index = 1
+                    addrs = spk.get("addresses", None)
+                    logger.info("addrs " + str(addrs))
+                    if addrs is not None and len(addrs) > 0:
+                        staker_addr = addrs[addr_index]
+
         block_vote = blk.get("votevalue", None)
         if block_vote is None:
             return block_vote
@@ -1061,20 +1082,20 @@ class Daemon(object):
         vote_value = block_vote.get("VoteValue", None)
         staker_addr = None
 
-        # get staker addr
-        txs = blk.get("tx", None)
-        if txs is not None and len(txs) > 1:
-            stake_vout = txs[1].get("vout", None)
-            if stake_vout is not None and len(stake_vout) > 1:
-                spk = stake_vout[1].get("scriptPubKey", None)
-                addr_index = 0
-                if spk is not None:
-                    spk_type = spk.get("type", None)
-                    if spk_type == "coldstake":
-                        addr_index = 1
-                    addrs = spk.get("addresses", None)
-                    if addrs is not None and len(addrs) > 0:
-                        staker_addr = addrs[addr_index]
+        # # get staker addr
+        # txs = blk.get("tx", None)
+        # if txs is not None and len(txs) > 1:
+        #     stake_vout = txs[1].get("vout", None)
+        #     if stake_vout is not None and len(stake_vout) > 1:
+        #         spk = stake_vout[1].get("scriptPubKey", None)
+        #         addr_index = 0
+        #         if spk is not None:
+        #             spk_type = spk.get("type", None)
+        #             if spk_type == "coldstake":
+        #                 addr_index = 1
+        #             addrs = spk.get("addresses", None)
+        #             if addrs is not None and len(addrs) > 0:
+        #                 staker_addr = addrs[addr_index]
 
 
         return {
@@ -1192,12 +1213,15 @@ class Daemon(object):
                 raise ReorgException("Chain reorg detected")
             blks.append(self._prepare_block(blk))
             txes.extend(self.get_block_transactions(blk))
-            votes.append(self.get_block_vote(blk))
+            blk_vote = self.get_block_vote(blk)
+            if blk_vote is not None:
+                votes.append(blk_vote)
             if last_height % 1000 == 0 or last_height == chain_height:
                 logger.info("commiting to database at block %r" % blk["height"])
                 self._db.db.blocks.insert_many(blks)
                 self._db.update_transactions(txes)
-                self._db.db.votes.insert_many(votes)
+                if len(votes) > 0:
+                    self._db.db.votes.insert_many(votes)
                 addrs_touched = self._db.update_addresses(txes)
                 self._update_stats(blk["height"], coin_supply)
                 self._db.update_richlist()
