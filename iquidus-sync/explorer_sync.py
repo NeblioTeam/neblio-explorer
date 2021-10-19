@@ -364,7 +364,7 @@ class Database(object):
             utxos.append(utxo)
             # limit utxo array size to 5000
             if len(utxos) > 5000:
-            	utxos = utxos[-5000:]
+                utxos = utxos[-5000:]
             self.db.tokens.update_one(
                 {"t_id": token_id},
                 {
@@ -506,6 +506,7 @@ class Database(object):
         self.rollback_addresses(transactions)
         self.db.txes.delete_many({"blockhash": blockhash})
         self.db.blocks.delete_many({"hash": blockhash})
+        self.db.votes.delete_many({"block_hash": blockhash})
 
     def update_transactions(self, transactions):
         # convert to json and back to serialize all objs
@@ -551,6 +552,19 @@ class Database(object):
         names = self.db.list_collection_names()
         if "blocks" not in names:
             self.db.create_collection("blocks")
+        if "txes" not in names:
+            self.db.create_collection("txes")
+        if "addresses" not in names:
+            self.db.create_collection("addresses")
+        if "tokens" not in names:
+            self.db.create_collection("tokens")
+        if "peers" not in names:
+            self.db.create_collection("peers")
+        if "proposals" not in names:
+            self.db.create_collection("proposals")
+        if "votes" not in names:
+            self.db.create_collection("votes")
+        if "blocks" in names:
             self.db.blocks.create_index("height", unique=True)
             self.db.blocks.create_index("hash")
         if "txes" in names:
@@ -564,6 +578,15 @@ class Database(object):
             self.db.addresses.create_index("balance")
         if "tokens" in names:
             self.db.tokens.create_index("t_id")
+        if "proposals" in names:
+            self.db.tokens.create_index("p_id")
+            self.db.tokens.create_index("start_block")
+            self.db.tokens.create_index("end_block")
+        if "votes" in names:
+            self.db.tokens.create_index("block_height")
+            self.db.tokens.create_index("block_hash")
+            self.db.tokens.create_index("proposal_id")
+            self.db.tokens.create_index("staker_addr")
         if "peers" in names:
             self.db.peers.create_index("createdAt",expireAfterSeconds=86400)
 
@@ -1027,6 +1050,41 @@ class Daemon(object):
             transactions.append(txInfo)
         return transactions
 
+    def get_block_vote(self, blk):
+        block_vote = blk.get("votevalue", None)
+        if block_vote is None:
+            return block_vote
+
+        block_height = blk.get("height", None)
+        block_hash = blk.get("hash", None)
+        proposal_id = block_vote.get("ProposalID", None)
+        vote_value = block_vote.get("VoteValue", None)
+        staker_addr = None
+
+        # get staker addr
+        txs = blk.get("tx", None)
+        if txs is not None and len(txs) > 1:
+            stake_vout = txs[1].get("vout", None)
+            if stake_vout is not None and len(stake_vout) > 1:
+                spk = stake_vout[1].get("scriptPubKey", None)
+                addr_index = 0
+                if spk is not None:
+                    spk_type = spk.get("type", None)
+                    if spk_type == "coldstake":
+                        addr_index = 1
+                    addrs = spk.get("addresses", None)
+                    if addrs is not None and len(addrs) > 0:
+                        staker_addr = addrs[addr_index]
+
+
+        return {
+            "block_height": block_height,
+            "block_hash": block_hash,
+            "proposal_id": proposal_id,
+            "vote_value": vote_value,
+            "staker_addr": staker_addr,
+        }
+
     def _wait_for_blockchain_sync(self):
         chain_height = self.blockchain_height()
         stats = self._db.get_stats()
@@ -1109,6 +1167,7 @@ class Daemon(object):
             coin_supply = 0
         blks = []
         txes = []
+        votes = []
         partial_addrs = 0
         if last_height > 1:
             last_height += 1
@@ -1133,10 +1192,12 @@ class Daemon(object):
                 raise ReorgException("Chain reorg detected")
             blks.append(self._prepare_block(blk))
             txes.extend(self.get_block_transactions(blk))
+            votes.append(self.get_block_vote(blk))
             if last_height % 1000 == 0 or last_height == chain_height:
                 logger.info("commiting to database at block %r" % blk["height"])
                 self._db.db.blocks.insert_many(blks)
                 self._db.update_transactions(txes)
+                self._db.db.votes.insert_many(votes)
                 addrs_touched = self._db.update_addresses(txes)
                 self._update_stats(blk["height"], coin_supply)
                 self._db.update_richlist()
