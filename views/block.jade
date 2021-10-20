@@ -25,8 +25,6 @@ block content
             th #{settings.locale.height}
             th #{settings.locale.difficulty}
             th #{settings.locale.confirmations}
-            if settings.heavy == true
-              th Vote
             th.hidden-xs #{settings.locale.size} (kB)
             th.hidden-xs #{settings.locale.bits}
             th.hidden-xs #{settings.locale.nonce}
@@ -69,6 +67,26 @@ block content
                 td.hidden-xs #{block.bits}
                 td.hidden-xs #{block.nonce}
                 td.hidden-xs #{time}
+
+    .panel.panel-default
+      .panel-heading(style='padding-left:25px;padding-right:25px;')
+        strong Block Vote
+      table.table.table-bordered.summary-table
+        thead
+          tr
+            th Proposal ID
+            th Vote
+            th Voting Address
+        tbody
+          if vote != null
+            tr
+              td #{vote.proposal_id}
+              td #{vote.vote_value}
+              td #{vote.staker_addr}
+          else
+            tr
+              td No Vote Data In This Block
+
 
     if block.hash == settings.genesis_block
       .alert.alert-info(role='alert', style='text-align:center;')

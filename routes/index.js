@@ -16,7 +16,13 @@ function route_get_block(res, blockhash) {
       } else {
         db.get_txs(block, function(txs) {
           if (txs.length > 0) {
-            res.render('block', { active: 'block', block: block, confirmations: settings.confirmations, txs: txs});
+          	db.get_block_vote(blockhash, function(vote) {
+          		if (vote) {
+          			res.render('block', { active: 'block', block: block, confirmations: settings.confirmations, txs: txs, vote: vote});
+          		} else {
+          			res.render('block', { active: 'block', block: block, confirmations: settings.confirmations, txs: txs});
+          		}
+          	});
           } else {
           	route_get_index(res, 'Block not found: ' + blockhash);
             // db.create_txs(block, function(){
