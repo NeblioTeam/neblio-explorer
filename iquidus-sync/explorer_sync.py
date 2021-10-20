@@ -1051,27 +1051,6 @@ class Daemon(object):
         return transactions
 
     def get_block_vote(self, blk):
-
-        # get staker addr
-        txs = blk.get("tx", None)
-        logger.info("tx " + str(txs))
-        if txs is not None and len(txs) > 1:
-            stake_vout = txs[1].get("vout", None)
-            logger.info("stake_vout " + str(stake_vout))
-            if stake_vout is not None and len(stake_vout) > 1:
-                spk = stake_vout[1].get("scriptPubKey", None)
-                logger.info("spk " + str(spk))
-                addr_index = 0
-                if spk is not None:
-                    spk_type = spk.get("type", None)
-                    logger.info("spk_type " + str(spk_type))
-                    if spk_type == "coldstake":
-                        addr_index = 1
-                    addrs = spk.get("addresses", None)
-                    logger.info("addrs " + str(addrs))
-                    if addrs is not None and len(addrs) > 0:
-                        staker_addr = addrs[addr_index]
-
         block_vote = blk.get("votevalue", None)
         if block_vote is None:
             return block_vote
@@ -1082,21 +1061,23 @@ class Daemon(object):
         vote_value = block_vote.get("VoteValue", None)
         staker_addr = None
 
-        # # get staker addr
-        # txs = blk.get("tx", None)
-        # if txs is not None and len(txs) > 1:
-        #     stake_vout = txs[1].get("vout", None)
-        #     if stake_vout is not None and len(stake_vout) > 1:
-        #         spk = stake_vout[1].get("scriptPubKey", None)
-        #         addr_index = 0
-        #         if spk is not None:
-        #             spk_type = spk.get("type", None)
-        #             if spk_type == "coldstake":
-        #                 addr_index = 1
-        #             addrs = spk.get("addresses", None)
-        #             if addrs is not None and len(addrs) > 0:
-        #                 staker_addr = addrs[addr_index]
-
+        # get staker addr
+        txs = blk.get("tx", None)
+        if txs is not None and len(txs) > 1:
+            stake_vout = txs[1].get("vout", None)
+            if stake_vout is not None and len(stake_vout) > 0:
+                # loop over vouts
+                for i in stake_vout:
+                    spk = i.get("scriptPubKey", None)
+                    addr_index = 0
+                    if spk is not None:
+                        spk_type = spk.get("type", None)
+                        if spk_type == "coldstake":
+                            addr_index = 1
+                        addrs = spk.get("addresses", None)
+                        if addrs is not None and len(addrs) > 0:
+                            staker_addr = addrs[addr_index]
+                            break
 
         return {
             "block_height": block_height,
