@@ -72,11 +72,12 @@ block content
       .panel-heading(style='padding-left:25px;padding-right:25px;')
         strong Block Vote
       table.table.table-bordered.summary-table
-        thead
-          tr
-            th Proposal ID
-            th Vote
-            th Voting Address
+        if vote != null
+          thead
+            tr
+              th Proposal ID
+              th Vote
+              th Voting Address
         tbody
           if vote != null
             tr
