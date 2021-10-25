@@ -16,15 +16,15 @@ function route_get_block(res, blockhash) {
       } else {
         db.get_txs(block, function(txs) {
           if (txs.length > 0) {
-          	db.get_block_vote(blockhash, function(vote) {
-          		if (vote) {
-          			res.render('block', { active: 'block', block: block, confirmations: settings.confirmations, txs: txs, vote: vote});
-          		} else {
-          			res.render('block', { active: 'block', block: block, confirmations: settings.confirmations, txs: txs});
-          		}
-          	});
+            db.get_block_vote(blockhash, function(vote) {
+              if (vote) {
+                res.render('block', { active: 'block', block: block, confirmations: settings.confirmations, txs: txs, vote: vote});
+              } else {
+                res.render('block', { active: 'block', block: block, confirmations: settings.confirmations, txs: txs});
+              }
+            });
           } else {
-          	route_get_index(res, 'Block not found: ' + blockhash);
+            route_get_index(res, 'Block not found: ' + blockhash);
             // db.create_txs(block, function(){
             //   db.get_txs(block, function(ntxs) {
             //     if (ntxs.length > 0) {
@@ -55,7 +55,7 @@ function route_get_tx(res, txid) {
         });
       }
       else {
-      	route_get_index(res, 'TX not found: ' + txid);
+        route_get_index(res, 'TX not found: ' + txid);
         // lib.get_rawtransaction(txid, function(rtx) {
         //   if (rtx.txid) {
         //     lib.prepare_vin(rtx, function(vin) {
@@ -106,25 +106,45 @@ function route_get_address(res, hash, count) {
   db.get_address(hash, function(address) {
     if (address) {
       var txs = [];
-      var hashes = address.txs.reverse();
-      if (address.txs.length < count) {
-        count = address.txs.length;
-      }
-      lib.syncLoop(count, function (loop) {
-        var i = loop.iteration();
-        db.get_tx(hashes[i].addresses, function(tx) {
-          if (tx) {
-            txs.push(tx);
+      var block_votes = {}
+      db.get_block_votes_by_address(hash, function(votes) {
+        if (votes.length > 0) {
+          lib.syncLoop(votes.length, function (loop) {
+            var i = loop.iteration();
+            if (!block_votes.hasOwnProperty(votes[i].proposal_id)) {
+              block_votes[votes[i].proposal_id]['Yay'] = 0
+              block_votes[votes[i].proposal_id]['Nay'] = 0
+            }
+            if (votes[i].vote_value == 'Yay') {
+              block_votes[votes[i].proposal_id]['Yay'] = block_votes[votes[i].proposal_id]['Yay'] + 1
+            }
+            if (votes[i].vote_value == 'Nay') {
+              block_votes[votes[i].proposal_id]['Nay'] = block_votes[votes[i].proposal_id]['Nay'] + 1
+            }
             loop.next();
-          } else {
-            loop.next();
-          }
+          });
+        } else {
+          block_votes = {}
+        }
+        var hashes = address.txs.reverse();
+        if (address.txs.length < count) {
+          count = address.txs.length;
+        }
+        lib.syncLoop(count, function (loop) {
+          var i = loop.iteration();
+          db.get_tx(hashes[i].addresses, function(tx) {
+            if (tx) {
+              txs.push(tx);
+              loop.next();
+            } else {
+              loop.next();
+            }
+          });
+        }, function(){
+
+          res.render('address', { active: 'address', address: address, txs: txs, votes: block_votes});
         });
-      }, function(){
-
-        res.render('address', { active: 'address', address: address, txs: txs});
       });
-
     } else {
       route_get_index(res, hash + ' not found');
     }
@@ -320,9 +340,9 @@ router.get('/qr/:string', function(req, res) {
 router.get('/ext/stats', function(req, res) {
   // for testnet just get the active addresses and token counts
   if (settings.network == 'testnet') {
-  	db.count_addresses(function(address_count) {
-  	  db.count_tokens(function(token_count) {
-  	  	res.send({ data: [{
+    db.count_addresses(function(address_count) {
+      db.count_tokens(function(token_count) {
+        res.send({ data: [{
           active_address_count: address_count,
           issued_token_count: token_count
         }]});
@@ -339,10 +359,10 @@ router.get('/ext/stats', function(req, res) {
       token_count_testnet = body.data[0].issued_token_count
       // get github download count
       request({uri: "https://api.github.com/repos/NeblioTeam/neblio/releases", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, body) {
-  	    for (var x = 0; x < body.length; x++){
+        for (var x = 0; x < body.length; x++){
           if (body[x].assets && body[x].assets.length){
-  	        for (var a = 0; a < body[x].assets.length; a++){
-  	          if (body[x].assets[a].download_count && body[x].assets[a].download_count > 0){
+            for (var a = 0; a < body[x].assets.length; a++){
+              if (body[x].assets[a].download_count && body[x].assets[a].download_count > 0){
                 wallet_download_count += body[x].assets[a].download_count
               }
             }
@@ -351,15 +371,15 @@ router.get('/ext/stats', function(req, res) {
         // get current active node count
         request({uri: "http://localhost:3003/24h_active_node_count", json: true, timeout: 2000, headers: {'User-Agent': 'neblio-block-explorer'}}, function (error, response, node_count) {
           db.count_addresses(function(address_count) {
-  	        db.count_tokens(function(token_count) {
+            db.count_tokens(function(token_count) {
               // add testnet and mainnet to get total counts
               var address_count_total = address_count + address_count_testnet
               var token_count_total = token_count + token_count_testnet
 
               // process github loc
-  	          var github_lines_of_code = 0
-  	          var gh_loc_path = './data/github_loc.dat'
-  	          // try to get total lines counted
+              var github_lines_of_code = 0
+              var gh_loc_path = './data/github_loc.dat'
+              // try to get total lines counted
               try {
                 if (fs.existsSync(gh_loc_path)) {
                   //file exists
@@ -408,11 +428,11 @@ router.get('/ext/summary', function(req, res) {
       lib.get_connectioncount(function(connections){
         lib.get_blockcount(function(blockcount) {
           lib.get_blockhash(blockcount, function(hash1) {
-          	lib.get_block(hash1, function(block1) {
+            lib.get_block(hash1, function(block1) {
               lib.get_blockhash(blockcount-2880, function(hash2) {
-              	lib.get_block(hash2, function(block2) {
-              	  var blocktime = (block1.time - block2.time)/2880;
-              	  db.count_addresses(function(address_count) {
+                lib.get_block(hash2, function(block2) {
+                  var blocktime = (block1.time - block2.time)/2880;
+                  db.count_addresses(function(address_count) {
                     db.get_stats(settings.coin, function (stats) {
                       if (hashrate == 'There was an error. Check your console.') {
                         hashrate = 0;

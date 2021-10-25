@@ -899,6 +899,7 @@ class Tx(object):
         ins = self.inputs()
         total = self._get_total(ins, outs, is_coinbase)
         has_token_inputs = False
+        is_stake = False
         is_cold_stake = False
         for inp in ins:
             if(inp.get("tokens", [])):
@@ -909,6 +910,7 @@ class Tx(object):
 
         for i in outs:
             if i.get("is_stake") is not None:
+                is_stake = i["is_stake"]
                 del i["is_stake"]
             if i.get("is_cold_stake") is not None:
                 is_cold_stake = i["is_cold_stake"]
@@ -919,6 +921,7 @@ class Tx(object):
             "txid": self.tx_id(),
             "total": total,
             "is_coinbase": is_coinbase,
+            "is_stake": is_stake,
             "is_cold_stake": is_cold_stake,
             "timestamp": self._time,
         }
@@ -1018,6 +1021,7 @@ class Daemon(object):
     def get_block_transactions(self, blk):
         transactions = []
         trx = blk.get("tx", [])
+        block_vote = blk.get("votevalue", None)
         if len(trx) == 0:
             return transactions
 
@@ -1025,6 +1029,7 @@ class Daemon(object):
             tpayTx = Tx(tx, self, blk["height"], blk["time"])
             details = tpayTx.details()
             has_token = False
+            has_block_vote = False
             for o in details.get("vout", []):
                 if (len(o["tokens"]) > 0):
                     has_token = True
@@ -1033,12 +1038,17 @@ class Daemon(object):
                 if (len(i["tokens"]) > 0):
                     has_token = True
                     break
+            if details["is_stake"] or details["is_cold_stake"]:
+                if block_vote is not None:
+                    has_block_vote = True
+
             txInfo = {
                 "txid" : details["txid"],
                 "blockhash" : blk["hash"],
                 "blockindex" : blk["height"],
                 "timestamp" : details["timestamp"],
                 "has_token" : has_token,
+                "has_block_vote": has_block_vote,
                 "is_cold_stake" : details["is_cold_stake"],
                 "total" : details["total"],
                 "vout" : details["vout"],
@@ -1059,6 +1069,15 @@ class Daemon(object):
         block_hash = blk.get("hash", None)
         proposal_id = block_vote.get("ProposalID", None)
         vote_value = block_vote.get("VoteValue", None)
+        # for now, only allow 1/0 (yay/nay) votes
+        if vote_value == '0':
+            vote_value = 'Yay'
+        elif vote_value == '1':
+            vote_value = 'Nay'
+        else:
+            #invalid vote
+            return None
+
         staker_addr = None
 
         # get staker addr

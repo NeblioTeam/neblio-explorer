@@ -48,8 +48,12 @@ block content
               json.data[i]['total'] = amount.toFixed(8);
               if (json.data[i]['has_token']) {
                 json.data[i]['token'] = "<span class='fas fa-coins'></span>";
+              } else if (json.data[i]['is_cold_stake'] && json.data[i]['has_block_vote']) {
+                json.data[i]['token'] = "<span class='far fa-snowflake'></span>&nbsp;<span class="fa fa-check-double"></span>";
               } else if (json.data[i]['is_cold_stake']) {
                 json.data[i]['token'] = "<span class='far fa-snowflake'></span>";
+              } else if (json.data[i]['has_block_vote']) {
+                json.data[i]['token'] = "<span class="fa fa-check-double"></span>";
               } else {
                 json.data[i]['token'] = "";
               }

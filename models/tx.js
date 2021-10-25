@@ -7,6 +7,8 @@ var TxSchema = new Schema({
   vout: { type: Array, default: [] },
   total: { type: Number, default: 0 },
   has_token: { type: Boolean, default: false },
+  has_block_vote: { type: Boolean, default: false },
+  is_stake: { type: Boolean, default: false },
   is_cold_stake: { type: Boolean, default: false },
   timestamp: { type: Number, default: 0 },
   blockhash: { type: String },

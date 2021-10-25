@@ -83,6 +83,21 @@ block content
                                   td(style='width:68%') #{t.amount}
     .panel.panel-default.hidden-xs
       .panel-heading
+        strong Block Votes By Address
+      table.table.table-bordered.table-striped.summary-table
+      	thead
+          tr
+          	th Proposal ID
+          	th Votes Yay
+          	th Votes Nay
+        tbody
+          each val, key in votes
+            tr
+              td a(href='/proposals') #{key}
+              td #{val['Yay']}
+              td #{val['Nay']}
+    .panel.panel-default.hidden-xs
+      .panel-heading
         strong #{settings.locale.ex_latest_transactions}
       table.table.table-bordered.table-striped.history-table
         include ./includes/address_history.jade  

@@ -20,8 +20,12 @@ tbody
       td.text-center
        if tx.has_token
          <span class='fas fa-coins'></span>
-       if tx.is_cold_stake
+       if (tx.is_cold_stake && tx.has_block_vote)
+         <span class='far fa-snowflake'></span>&nbsp;<span class="fa fa-check-double"></span>
+       else if tx.is_cold_stake
          <span class='far fa-snowflake'></span>
+       else if tx.has_block_vote
+         <span class="fa fa-check-double"></span>
       each s in tx.vin
         if s.addresses == address.a_id
           - vin = s.amount
