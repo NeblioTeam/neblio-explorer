@@ -81,9 +81,11 @@ block content
         tbody
           if vote != null
             tr
-              td a(href='/proposals') #{vote.proposal_id}
+              td
+                a(href='/proposals') #{vote.proposal_id}
               td #{vote.vote_value}
-              td a(href='/address/#{vote.staker_addr}') #{vote.staker_addr}
+              td
+                a(href='/address/#{vote.staker_addr}') #{vote.staker_addr}
           else
             tr
               td No Vote Data In This Block

@@ -93,7 +93,8 @@ block content
         tbody
           each val, key in votes
             tr
-              td a(href='/proposals') #{key}
+              td
+                a(href='/proposals') #{key}
               td #{val['Yay']}
               td #{val['Nay']}
     .panel.panel-default.hidden-xs

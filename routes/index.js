@@ -112,6 +112,7 @@ function route_get_address(res, hash, count) {
           lib.syncLoop(votes.length, function (loop) {
             var i = loop.iteration();
             if (!block_votes.hasOwnProperty(votes[i].proposal_id)) {
+              block_votes[votes[i].proposal_id] = {}
               block_votes[votes[i].proposal_id]['Yay'] = 0
               block_votes[votes[i].proposal_id]['Nay'] = 0
             }
