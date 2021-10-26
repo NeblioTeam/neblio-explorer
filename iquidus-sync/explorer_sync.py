@@ -1030,6 +1030,9 @@ class Daemon(object):
             rollback_height = prev_blk["height"]
             if rollback_height % 100 == 0:
                 logger.info("Rolled back to block: " + str(rollback_height))
+        coin_supply = self.get_coin_supply()
+        self._update_stats(rollback_height - 1, coin_supply)
+
 
     def get_block_transactions(self, blk):
         transactions = []
@@ -1313,7 +1316,8 @@ class Daemon(object):
         stats = self._db.get_stats()
         self._wait_for_blockchain_sync()
         self._ensure_blocks_collection_in_sync(stats["last"])
-        # self.rollback_to_height(2972177)
+        # FOR TESTING ONLY, DO NOT USE IN PRODUCTION
+        self.rollback_to_height(2972177)
         # while True:
         #     try:
         #         self._process_blocks()
