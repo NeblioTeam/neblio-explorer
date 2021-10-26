@@ -1215,9 +1215,7 @@ class Daemon(object):
         while last_height <= chain_height:
             if next_block_hash is not None:
                 blk = self.get_block(next_block_hash)
-                logger.info("Next block: " + next_block_hash)
             else:
-                logger.info("Next block Unknown, getting hash from height.")
                 blk = self.get_block_at_height(last_height)
             prev_blk = blk.get("previousblockhash")
             next_block_hash = blk.get("nextblockhash", None)
