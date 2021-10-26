@@ -508,6 +508,19 @@ class Database(object):
         self.db.blocks.delete_many({"hash": blockhash})
         self.db.votes.delete_many({"block_hash": blockhash})
 
+    def rollback_to_height(self, height):
+        chain_height = self.blockchain_height()
+        rollback_height = chain_height
+        tip_blk = self.get_block_at_height(chain_height)
+        prev_hash = tip_blk["hash"]
+        while rollback_height > height:
+            prev_blk = self.get_block(prev_hash)
+            self.rollback(prev_hash)
+            prev_hash = prev_blk["previousblockhash"]
+            rollback_height = prev_blk["height"]
+
+
+
     def update_transactions(self, transactions):
         # convert to json and back to serialize all objs
         transactions = json.dumps(transactions)
@@ -1070,9 +1083,9 @@ class Daemon(object):
         proposal_id = block_vote.get("ProposalID", None)
         vote_value = block_vote.get("VoteValue", None)
         # for now, only allow 1/0 (yay/nay) votes
-        if vote_value == '0':
+        if vote_value == 0:
             vote_value = 'Yay'
-        elif vote_value == '1':
+        elif vote_value == 1:
             vote_value = 'Nay'
         else:
             #invalid vote
@@ -1198,7 +1211,9 @@ class Daemon(object):
         while last_height <= chain_height:
             if next_block_hash is not None:
                 blk = self.get_block(next_block_hash)
+                logger.info("Next block: " + next_block_hash)
             else:
+                logger.info("Next block Unknown, getting hash from height.")
                 blk = self.get_block_at_height(last_height)
             prev_blk = blk.get("previousblockhash")
             next_block_hash = blk.get("nextblockhash", None)
@@ -1298,6 +1313,7 @@ class Daemon(object):
         stats = self._db.get_stats()
         self._wait_for_blockchain_sync()
         self._ensure_blocks_collection_in_sync(stats["last"])
+        # self._db.rollback_to_height(2972177)
         while True:
             try:
                 self._process_blocks()
