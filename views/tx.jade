@@ -15,6 +15,7 @@ block content
           tr
             th #{settings.locale.confirmations}
             th.hidden-xs #{settings.locale.tx_block_hash}
+            th.hidden-xs Block Vote
             th #{settings.locale.timestamp}
             th
         tbody
@@ -24,6 +25,9 @@ block content
                 td #{confirms}
                 td.hidden-xs
                   a(href='/block/#{tx.blockhash}') #{tx.blockhash}
+                td.hidden-xs
+                  if tx.has_block_vote
+                    a(href='/block/#{tx.blockhash}') span.fa.fa-check-double
                 td #{time}
                 td.view_tx
                   a(href='/block/#{tx.blockhash}')
