@@ -1316,17 +1316,17 @@ class Daemon(object):
         self._wait_for_blockchain_sync()
         self._ensure_blocks_collection_in_sync(stats["last"])
         # FOR TESTING ONLY, DO NOT USE IN PRODUCTION
-        self.rollback_to_height(2972177)
-        # while True:
-        #     try:
-        #         self._process_blocks()
-        #         self._run_peers_sync()
-        #         #self._run_markets_sync()
-        #     except ReorgException:
-        #         continue
-        #     except Exception as err:
-        #         logger.exception("got exception processing blocks")
-        #     time.sleep(10)
+        # self.rollback_to_height(2972177)
+        while True:
+            try:
+                self._process_blocks()
+                self._run_peers_sync()
+                #self._run_markets_sync()
+            except ReorgException:
+                continue
+            except Exception as err:
+                logger.exception("got exception processing blocks")
+            time.sleep(10)
 
 
 if __name__ == "__main__":
