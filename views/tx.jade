@@ -27,7 +27,8 @@ block content
                   a(href='/block/#{tx.blockhash}') #{tx.blockhash}
                 td.hidden-xs
                   if tx.has_block_vote
-                    a(href='/block/#{tx.blockhash}') span.fa.fa-check-double
+                    a(href='/block/#{tx.blockhash}')
+                      | span.fa.fa-check-double
                 td #{time}
                 td.view_tx
                   a(href='/block/#{tx.blockhash}')
