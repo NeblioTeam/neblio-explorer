@@ -1020,7 +1020,8 @@ class Daemon(object):
         return float(meth())
 
     def rollback_to_height(self, height):
-        rollback_height = self.blockchain_height()
+        stats = self._db.get_stats()
+        rollback_height = stats["last"]
         tip_blk = self.get_block_at_height(rollback_height)
         prev_hash = tip_blk["hash"]
         while rollback_height > height:
