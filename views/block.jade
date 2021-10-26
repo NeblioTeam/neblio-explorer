@@ -83,7 +83,12 @@ block content
             tr
               td
                 a(href='/proposals') #{vote.proposal_id}
-              td #{vote.vote_value}
+              td
+                if vote.vote_value == 'Yea'
+                  span.fas.fa-check-circle
+                if vote.vote_value == 'Nay'
+                  span.fas.fa-times-circle
+                #{vote.vote_value}
               td
                 a(href='/address/#{vote.staker_addr}') #{vote.staker_addr}
           else

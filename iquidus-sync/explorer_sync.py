@@ -1086,11 +1086,11 @@ class Daemon(object):
         block_hash = blk.get("hash", None)
         proposal_id = block_vote.get("ProposalID", None)
         vote_value = block_vote.get("VoteValue", None)
-        # for now, only allow 1/0 (yay/nay) votes
+        # for now, only allow 1/0 (yea/nay) votes
         if vote_value == 0:
             vote_value = 'Nay'
         elif vote_value == 1:
-            vote_value = 'Yay'
+            vote_value = 'Yea'
         else:
             #invalid vote
             return None

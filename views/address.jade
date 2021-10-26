@@ -88,14 +88,16 @@ block content
         thead
           tr
             th Proposal ID
-            th Votes Yay
+            th Votes Yea
+              span.fas.fa-check-circle
             th Votes Nay
+              span.fas.fa-times-circle
         tbody
           each val, key in votes
             tr
               td
-                a(href='/proposals') #{key}
-              td #{val['Yay']}
+                a(href='/proposals') NIP#{key}
+              td #{val['Yea']}
               td #{val['Nay']}
     .panel.panel-default.hidden-xs
       .panel-heading

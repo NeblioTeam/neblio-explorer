@@ -113,11 +113,11 @@ function route_get_address(res, hash, count) {
             var i = loop.iteration();
             if (!block_votes.hasOwnProperty(votes[i].proposal_id)) {
               block_votes[votes[i].proposal_id] = {}
-              block_votes[votes[i].proposal_id]['Yay'] = 0
+              block_votes[votes[i].proposal_id]['Yea'] = 0
               block_votes[votes[i].proposal_id]['Nay'] = 0
             }
-            if (votes[i].vote_value == 'Yay') {
-              block_votes[votes[i].proposal_id]['Yay'] = block_votes[votes[i].proposal_id]['Yay'] + 1
+            if (votes[i].vote_value == 'Yea') {
+              block_votes[votes[i].proposal_id]['Yea'] = block_votes[votes[i].proposal_id]['Yea'] + 1
             }
             if (votes[i].vote_value == 'Nay') {
               block_votes[votes[i].proposal_id]['Nay'] = block_votes[votes[i].proposal_id]['Nay'] + 1
