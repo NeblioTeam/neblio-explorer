@@ -1088,9 +1088,9 @@ class Daemon(object):
         vote_value = block_vote.get("VoteValue", None)
         # for now, only allow 1/0 (yay/nay) votes
         if vote_value == 0:
-            vote_value = 'Yay'
-        elif vote_value == 1:
             vote_value = 'Nay'
+        elif vote_value == 1:
+            vote_value = 'Yay'
         else:
             #invalid vote
             return None
@@ -1252,6 +1252,7 @@ class Daemon(object):
                             addrs_touched, len(txes)))
                 blks = []
                 txes = []
+                votes = []
             if last_height % 4000 == 0:
                 logger.info(
                     "Prunning blocks collection older "
