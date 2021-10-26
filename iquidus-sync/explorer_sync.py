@@ -508,18 +508,6 @@ class Database(object):
         self.db.blocks.delete_many({"hash": blockhash})
         self.db.votes.delete_many({"block_hash": blockhash})
 
-    def rollback_to_height(self, height):
-        chain_height = self.blockchain_height()
-        rollback_height = chain_height
-        tip_blk = self.get_block_at_height(chain_height)
-        prev_hash = tip_blk["hash"]
-        while rollback_height > height:
-            prev_blk = self.get_block(prev_hash)
-            self.rollback(prev_hash)
-            prev_hash = prev_blk["previousblockhash"]
-            rollback_height = prev_blk["height"]
-
-
 
     def update_transactions(self, transactions):
         # convert to json and back to serialize all objs
@@ -1031,6 +1019,18 @@ class Daemon(object):
             return 0
         return float(meth())
 
+    def rollback_to_height(self, height):
+        rollback_height = self.blockchain_height()
+        tip_blk = self.get_block_at_height(rollback_height)
+        prev_hash = tip_blk["hash"]
+        while rollback_height > height:
+            prev_blk = self.get_block(prev_hash)
+            self._db.rollback(prev_hash)
+            prev_hash = prev_blk["previousblockhash"]
+            rollback_height = prev_blk["height"]
+            if rollback_height % 100 == 0:
+                logger.info("Rolled back to block: " + str(rollback_height))
+
     def get_block_transactions(self, blk):
         transactions = []
         trx = blk.get("tx", [])
@@ -1313,17 +1313,17 @@ class Daemon(object):
         stats = self._db.get_stats()
         self._wait_for_blockchain_sync()
         self._ensure_blocks_collection_in_sync(stats["last"])
-        # self._db.rollback_to_height(2972177)
-        while True:
-            try:
-                self._process_blocks()
-                self._run_peers_sync()
-                #self._run_markets_sync()
-            except ReorgException:
-                continue
-            except Exception as err:
-                logger.exception("got exception processing blocks")
-            time.sleep(10)
+        # self.rollback_to_height(2972177)
+        # while True:
+        #     try:
+        #         self._process_blocks()
+        #         self._run_peers_sync()
+        #         #self._run_markets_sync()
+        #     except ReorgException:
+        #         continue
+        #     except Exception as err:
+        #         logger.exception("got exception processing blocks")
+        #     time.sleep(10)
 
 
 if __name__ == "__main__":
