@@ -1312,7 +1312,27 @@ class Daemon(object):
         else:
             logger.warning("nodejs not found. Skipping market sync")
 
+    def _run_proposals_sync(self):
+        proposals_data = urllib.request.urlopen('https://raw.githubusercontent.com/NeblioTeam/Neblio-Improvement-Proposals/main/proposals.json')
+        proposals = json.loads(proposals_data.read())
+        network = self._explorer_cfg.get("network")
+        for p in proposals:
+            if p['network'] == network:
+                self._db.db.proposals.update_one(
+                {"p_id": p["proposal_id"]},
+                {
+                    "$set": {
+                        "name": p["proposal_name"],
+                        "desc": p["proposal_desc"],
+                        "url": 'https://github.com/NeblioTeam/Neblio-Improvement-Proposals/issues/' + str(p["proposal_id"]),
+                        "start_block": p["start_block"],
+                        "end_block": p["end_block"],
+                    }
+                }, upsert=True)
+
+
     def run(self):
+        count = 0
         stats = self._db.get_stats()
         self._wait_for_blockchain_sync()
         self._ensure_blocks_collection_in_sync(stats["last"])
@@ -1328,6 +1348,10 @@ class Daemon(object):
             except Exception as err:
                 logger.exception("got exception processing blocks")
             time.sleep(10)
+            if count % 100 == 0:
+                self._run_proposals_sync()
+                count = 0
+            count = count + 1
 
 
 if __name__ == "__main__":
