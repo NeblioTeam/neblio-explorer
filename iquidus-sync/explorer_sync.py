@@ -1315,9 +1315,10 @@ class Daemon(object):
     def _run_proposals_sync(self):
         logger.info("Syncing proposals from GitHub")
         proposals_data = urllib.request.urlopen('https://raw.githubusercontent.com/NeblioTeam/Neblio-Improvement-Proposals/main/proposals.json')
-        proposals = json.loads(proposals_data.read())
+        proposals = proposals_data.read()
+        proposals_json = json.loads(proposals.decode('utf-8'))
         network = self._explorer_cfg.get("network")
-        for p in proposals:
+        for p in proposals_json:
             if p['network'] == network:
                 self._db.db.proposals.update_one(
                 {"p_id": p["proposal_id"]},
