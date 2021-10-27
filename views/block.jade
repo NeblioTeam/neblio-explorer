@@ -83,11 +83,13 @@ block content
             tr
               td
                 a(href='/proposals') NIP#{vote.proposal_id}
-              td
-                if vote.vote_value == 'Yea'
+
+              if vote.vote_value == 'Yea'
+                td.success
                   span.fas.fa-check-circle
                   |  #{vote.vote_value}
-                if vote.vote_value == 'Nay'
+              if vote.vote_value == 'Nay'
+                td.danger
                   span.fas.fa-times-circle
                   |  #{vote.vote_value}
               td

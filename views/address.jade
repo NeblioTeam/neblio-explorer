@@ -97,8 +97,8 @@ block content
             tr
               td
                 a(href='/proposals') NIP#{key}
-              td #{val['Yea']}
-              td #{val['Nay']}
+              td.success #{val['Yea']}
+              td.danger #{val['Nay']}
     .panel.panel-default.hidden-xs
       .panel-heading
         strong #{settings.locale.ex_latest_transactions}
