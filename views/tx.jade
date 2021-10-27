@@ -25,10 +25,10 @@ block content
                 td #{confirms}
                 td.hidden-xs
                   a(href='/block/#{tx.blockhash}') #{tx.blockhash}
-                td.hidden-xs
+                td.hidden-xs(style='text-align:center')
                   if tx.has_block_vote
                     a(href='/block/#{tx.blockhash}')
-                      | span.fa.fa-check-double
+                      span.fa.fa-check-double
                 td #{time}
                 td.view_tx
                   a(href='/block/#{tx.blockhash}')
