@@ -1313,6 +1313,7 @@ class Daemon(object):
             logger.warning("nodejs not found. Skipping market sync")
 
     def _run_proposals_sync(self):
+        logger.info("Syncing proposals from GitHub")
         proposals_data = urllib.request.urlopen('https://raw.githubusercontent.com/NeblioTeam/Neblio-Improvement-Proposals/main/proposals.json')
         proposals = json.loads(proposals_data.read())
         network = self._explorer_cfg.get("network")
