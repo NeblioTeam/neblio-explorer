@@ -113,6 +113,11 @@ html
                 a.navbar-link.loading(href='/movement')
                   span.fas.fa-exchange-alt
                   span.menu-text #{settings.locale.menu_movement}
+            if settings.display.voting == true
+              li#proposals
+                a.navbar-link.loading(href='/proposals')
+                  span.fa.fa-check-double
+                  span.menu-text Voting
             if settings.display.token == true
               li#token
                 a.navbar-link(href='/token')
