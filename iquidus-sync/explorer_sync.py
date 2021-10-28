@@ -1318,19 +1318,53 @@ class Daemon(object):
         proposals = proposals_data.read()
         proposals_json = json.loads(proposals.decode('utf-8'))
         network = self._explorer_cfg.get("network")
+        stats = self._db.get_stats()
+        last_block_height = int(stats["last"])
         for p in proposals_json:
             if p['network'] == network:
+
+                # set status based on block height
+                status = "unknown"
+                if last_block_height < p["start_block"]:
+                    status = "upcoming"
+                elif last_block_height >= p["start_block"] and last_block_height <= p["end_block"]:
+                    status = "in_progress"
+                # don't mark as completed until a 20 block buffer is in
+                # This will prevent reorgs from affecting the last few
+                # blocks since we will be copying the votes to the
+                # proposal entry in the DB upton completion
+                elif last_block_height > (p["end_block"] + 20):
+                    status = "completed"
+
+                completed_votes = {}
+                # if the vote is over, copy the vote details here for easy future lookup
+                if status == "completed":
+                    votes = self._db.db.votes.find({"proposal_id": p["proposal_id"]})
+                    # find the total number of eligible votes
+                    total_votes = (p["end_block"] - p["start_block"] + 1)
+                    completed_votes["Yea"] = 0
+                    completed_votes["Nay"] = 0
+                    completed_votes["no_vote"] = 0
+                    for v in votes:
+                        if (v["vote_value"] == "Yea"):
+                            completed_votes["Yea"] = completed_votes["Yea"] + 1
+                        elif (v["vote_value"] == "Nay"):
+                            completed_votes["Nay"] = completed_votes["Nay"] + 1
+                    completed_votes["no_vote"] = total_votes - completed_votes["Yea"] - completed_votes["Nay"]
+
                 self._db.db.proposals.update_one(
-                {"p_id": p["proposal_id"]},
-                {
-                    "$set": {
-                        "name": p["proposal_name"],
-                        "desc": p["proposal_desc"],
-                        "url": 'https://github.com/NeblioTeam/Neblio-Improvement-Proposals/issues/' + str(p["proposal_id"]),
-                        "start_block": p["start_block"],
-                        "end_block": p["end_block"],
-                    }
-                }, upsert=True)
+                    {"p_id": p["proposal_id"]},
+                    {
+                        "$set": {
+                            "name": p["proposal_name"],
+                            "desc": p["proposal_desc"],
+                            "url": 'https://github.com/NeblioTeam/Neblio-Improvement-Proposals/issues/' + str(p["proposal_id"]),
+                            "start_block": p["start_block"],
+                            "end_block": p["end_block"],
+                            "status": status,
+                            "completed_votes": completed_votes,
+                        }
+                    }, upsert=True)
 
 
     def run(self):

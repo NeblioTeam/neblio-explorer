@@ -8,6 +8,8 @@ var ProposalSchema = new Schema({
   url: { type: String, default: "" },
   start_block: { type: Number, default: 0, index: true },
   end_block: { type: Number, default: 0, index: true },
+  status: { type: String, default: "", index: true },
+  completed_votes: { type: Object, default: {}}
 }, {id: false});
 
 module.exports = mongoose.model('Proposal', ProposalSchema);
