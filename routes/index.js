@@ -259,22 +259,39 @@ router.get('/reward', function(req, res){
 router.get('/voting', function(req, res){
   db.get_all_proposals(function (proposals) {
     db.get_votes_for_active_proposals(function (votes) {
-      upcoming_proposals = []
-      in_progress_proposals = []
-      completed_proposals = []
-      // sort our proposals based on status
-      lib.syncLoop(proposals.length, function (loop) {
-        var i = loop.iteration();
-        if (proposals[i]["status"] == "upcoming") {
-          upcoming_proposals.push(proposals[i])
-        } else if (proposals[i]["status"] == "in_progress") {
-          in_progress_proposals.push(proposals[i])
-        } else if (proposals[i]["status"] == "completed") {
-          completed_proposals.push(proposals[i])
-        }
-        loop.next();
+    	db.get_stats(settings.coin, function (stats) {
+	      upcoming_proposals = []
+	      in_progress_proposals = []
+	      completed_proposals = []
+	      active_votes = {}
+	      last_block = stats["last"]
+	      // sort our active votes per each proposal
+	      lib.syncLoop(votes.length, function (loop) {
+	      	var i = loop.iteration();
+	      	if (!(votes[i]["proposal_id"] in active_votes)) {
+	      		active_votes[votes[i]["proposal_id"] = {}
+	      		active_votes[votes[i]["proposal_id"]['Yea'] = 0
+	      		active_votes[votes[i]["proposal_id"]['Nay'] = 0
+	      	}
+	      	active_votes[votes[i]["proposal_id"]][votes[i]["vote_value"]] = active_votes[votes[i]["proposal_id"]][votes[i]["vote_value"]] + 1
+	      	loop.next();
+	      });
+
+	      // sort our proposals based on status
+	      lib.syncLoop(proposals.length, function (loop) {
+	        var i = loop.iteration();
+	        if (proposals[i]["status"] == "upcoming") {
+	          upcoming_proposals.push(proposals[i])
+	        } else if (proposals[i]["status"] == "in_progress") {
+	          in_progress_proposals.push(proposals[i])
+	          active_votes[proposals[i]["p_id"]]["no_vote"] = last_block - proposals[i]["start_block"] + 1 - active_votes[proposals[i]["p_id"]]["Yea"] - active_votes[proposals[i]["p_id"]]["Nay"]
+	        } else if (proposals[i]["status"] == "completed") {
+	          completed_proposals.push(proposals[i])
+	        }
+	        loop.next();
+	      });
+	      res.render('voting', { active: 'voting', upcoming_proposals: upcoming_proposals, in_progress_proposals: in_progress_proposals, completed_proposals: completed_proposals, active_votes: votes});
       });
-      res.render('voting', { active: 'voting', upcoming_proposals: upcoming_proposals, in_progress_proposals: in_progress_proposals, completed_proposals: completed_proposals, active_votes: votes });
     });
   });
 });
