@@ -26,12 +26,25 @@ block content
             th Proposal ID
             th Vote Data
         tbody
-          each up in upcoming_proposals
+          each up in completed_proposals
             tr
               td(style="width: 120px")
                 a(href=up.url, target='_blank') NIP#{up.p_id}
               td #{up.name}
-                | #{up.desc}
+                div.panel-group
+                  div.panel
+                  div.panel-heading(style="background-color: #bbbbbb !important;")
+                    div.panel-title(style="font-weight: bold;")
+                      a(href="#collapse#{up.p_id}" data-toggle="collapse") #{up.name}
+                        i.fas.fa-chevron-down
+                  div.pannel-collapse.collapse(id="collapse#{up.p_id}")
+                    div.panel-body
+                      | #{up.desc}
+                div(style="display: flex; justify-content: space-between;width: 100%; text-align: justify; -ms-text-justify: distribute-all-lines; text-justify: distribute-all-lines;")
+                  div(style="font-weight: bold;")
+                    | Start Block: #{up.start_block}
+                  div(style="font-weight: bold;")
+                    | End Block: #{up.end_block}
     .panel.panel-default
       .panel-heading(style='padding-left:25px;padding-right:25px;')
         strong Completed Votes
