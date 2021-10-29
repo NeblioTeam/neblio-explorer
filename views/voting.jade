@@ -13,7 +13,7 @@ block content
         tbody
           each ip in in_progress_proposals
             tr
-              td
+              td(style="width: 120px")
                 a(href=ip.url, target='_blank') NIP#{ip.p_id}
               td #{ip.name}
                 | #{ip.desc}
@@ -28,7 +28,7 @@ block content
         tbody
           each up in upcoming_proposals
             tr
-              td
+              td(style="width: 120px")
                 a(href=up.url, target='_blank') NIP#{up.p_id}
               td #{up.name}
                 | #{up.desc}
@@ -43,14 +43,14 @@ block content
         tbody
           each cp in completed_proposals
             tr
-              td
+              td(style="width: 120px")
                 a(href=cp.url, target='_blank') NIP#{cp.p_id}
               td
                 div.panel-group
                   div.panel.panel-primary
                     div.panel-heading
-                      div.panel-title
-                        a(href="#collapse#{cp.p_id}" data-toggle="collapse") #{cp.name}
+                      div.panel-title(style="font-weight: bold")
+                        a(href="#collapse#{cp.p_id}" data-toggle="collapse") #{cp.name} i.fas.fa-chevron-down
                     div.pannel-collapse.collapse(id="collapse#{cp.p_id}")
                       div.panel-body
                         | #{cp.desc}
