@@ -256,9 +256,32 @@ router.get('/reward', function(req, res){
   //});
 });
 
+router.get('/voting', function(req, res){
+  db.get_all_proposals(function (proposals) {
+    db.get_votes_for_active_proposals(function (votes) {
+      upcoming_proposals = []
+      in_progress_proposals = []
+      completed_proposals = []
+      // sort our proposals based on status
+      lib.syncLoop(proposals.length, function (loop) {
+        var i = loop.iteration();
+        if (proposals[i]["status"] == "upcoming") {
+          upcoming_proposals.append(proposals[i])
+        } else if (proposals[i]["status"] == "in_progress") {
+          in_progress_proposals.append(proposals[i])
+        } else if (proposals[i]["status"] == "completed") {
+          completed_proposals.append(proposals[i])
+        }
+        loop.next();
+      });
+      res.render('voting', { active: 'voting', upcoming_proposals: upcoming_proposals, in_progress_proposals: in_progress_proposals, completed_proposals: completed_proposals, active_votes: votes });
+    });
+  });
+});
+
 router.get('/token', function(req, res){
   db.get_tokens(function (tokens) {
-    res.render('tokens', { tokens: tokens });
+    res.render('tokens', {active: 'token', tokens: tokens });
   });
 });
 

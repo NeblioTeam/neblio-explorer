@@ -114,8 +114,8 @@ html
                   span.fas.fa-exchange-alt
                   span.menu-text #{settings.locale.menu_movement}
             if settings.display.voting == true
-              li#proposals
-                a.navbar-link.loading(href='/proposals')
+              li#voting
+                a.navbar-link.loading(href='/voting')
                   span.fa.fa-check-double
                   span.menu-text Voting
             if settings.display.token == true
