@@ -270,8 +270,8 @@ router.get('/voting', function(req, res){
 	      	var i = loop.iteration();
 	      	if (!(votes[i]["proposal_id"] in active_votes)) {
 	      		active_votes[votes[i]["proposal_id"] = {}
-	      		active_votes[votes[i]["proposal_id"]['Yea'] = 0
-	      		active_votes[votes[i]["proposal_id"]['Nay'] = 0
+	      		active_votes[votes[i]["proposal_id"]]['Yea'] = 0
+	      		active_votes[votes[i]["proposal_id"]]['Nay'] = 0
 	      	}
 	      	active_votes[votes[i]["proposal_id"]][votes[i]["vote_value"]] = active_votes[votes[i]["proposal_id"]][votes[i]["vote_value"]] + 1
 	      	loop.next();
