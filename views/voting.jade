@@ -47,13 +47,35 @@ block content
                 a(href=cp.url, target='_blank') NIP#{cp.p_id}
               td
                 div.panel-group
-                  div.panel.panel-primary
-                    div.panel-heading
-                      div.panel-title(style="font-weight: bold")
-                        a(href="#collapse#{cp.p_id}" data-toggle="collapse") #{cp.name} i.fas.fa-chevron-down
-                    div.pannel-collapse.collapse(id="collapse#{cp.p_id}")
-                      div.panel-body
-                        | #{cp.desc}
+                  if (((cp.completed_votes.Nay + cp.completed_votes.Yea) / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100) >= 20)
+                    if ((cp.completed_votes.Yea / (cp.completed_votes.Yea + cp.completed_votes.Nay) * 100) >= 50)
+                      div.panel.panel-success
+                        div.panel-heading
+                          div.panel-title(style="font-weight: bold")
+                            a(href="#collapse#{cp.p_id}" data-toggle="collapse") #{cp.name}
+                              #{' '}
+                              i.fas.fa-chevron-down
+                        div.pannel-collapse.collapse(id="collapse#{cp.p_id}")
+                          div.panel-body
+                            | #{cp.desc}
+                    else
+                      div.panel.panel-danger
+                        div.panel-heading
+                          div.panel-title(style="font-weight: bold")
+                            a(href="#collapse#{cp.p_id}" data-toggle="collapse") #{cp.name}
+                              i.fas.fa-chevron-down
+                        div.pannel-collapse.collapse(id="collapse#{cp.p_id}")
+                          div.panel-body
+                            | #{cp.desc}
+                  else
+                    div.panel
+                      div.panel-heading(style="background-color: #bbbbbb !important;")
+                        div.panel-title(style="font-weight: bold;")
+                          a(href="#collapse#{cp.p_id}" data-toggle="collapse") #{cp.name}
+                            i.fas.fa-chevron-down
+                      div.pannel-collapse.collapse(id="collapse#{cp.p_id}")
+                        div.panel-body
+                          | #{cp.desc}
                 div(style="display: flex; justify-content: space-between;width: 100%; text-align: justify; -ms-text-justify: distribute-all-lines; text-justify: distribute-all-lines;")
                   div(style="font-weight: bold;")
                     | Start Block: #{cp.start_block}
@@ -66,10 +88,13 @@ block content
                  div(style="display: flex; justify-content: space-around;width: 100%; text-align: justify; -ms-text-justify: distribute-all-lines; text-justify: distribute-all-lines;")
                    div.text-success
                      | Votes Yea: #{cp.completed_votes.Yea}
+                     #{'(' + (cp.completed_votes.Yea / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100).toFixed(1) + '%)')
                    div.text-danger
                      | Votes Nay: #{cp.completed_votes.Nay}
+                     #{'(' + (cp.completed_votes.Nay / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100).toFixed(1) + '%)')
                    div
                      | No Vote: #{cp.completed_votes.no_vote}
+                     #{'(' + (cp.completed_votes.no_vote / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100).toFixed(1) + '%)')
 
 
     .footer-padding
