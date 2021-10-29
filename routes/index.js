@@ -266,11 +266,11 @@ router.get('/voting', function(req, res){
       lib.syncLoop(proposals.length, function (loop) {
         var i = loop.iteration();
         if (proposals[i]["status"] == "upcoming") {
-          upcoming_proposals.append(proposals[i])
+          upcoming_proposals.push(proposals[i])
         } else if (proposals[i]["status"] == "in_progress") {
-          in_progress_proposals.append(proposals[i])
+          in_progress_proposals.push(proposals[i])
         } else if (proposals[i]["status"] == "completed") {
-          completed_proposals.append(proposals[i])
+          completed_proposals.push(proposals[i])
         }
         loop.next();
       });
