@@ -21,8 +21,8 @@ block content
                 a(href=ip.url, target='_blank') NIP#{ip.p_id}
               td
                 div.panel-group
-                  if (((active_votes.#{ip.p_id}.Nay + active_votes.#{ip.p_id}.Yea) / (active_votes.#{ip.p_id}.no_vote + active_votes.#{ip.p_id}.Yea + active_votes.#{ip.p_id}.Nay) * 100) >= 20)
-                    if ((active_votes.#{ip.p_id}.Yea / (active_votes.#{ip.p_id}.Yea + active_votes.#{ip.p_id}.Nay) * 100) >= 50)
+                  if (((active_votes.ip.p_id.Nay + active_votes.ip.p_id.Yea) / (active_votes.ip.p_id.no_vote + active_votes.ip.p_id.Yea + active_votes.ip.p_id.Nay) * 100) >= 20)
+                    if ((active_votes.ip.p_id.Yea / (active_votes.ip.p_id.Yea + active_votes.ip.p_id.Nay) * 100) >= 50)
                       div.panel.panel-success
                         div.panel-heading
                           div.panel-title(style="font-weight: bold")
@@ -56,19 +56,19 @@ block content
                   div(style="font-weight: bold;")
                     | End Block: #{ip.end_block}
                 div(class='progress progress-striped active' style="margin-bottom: 0;")
-                  div(class='progress-bar progress-bar-success' role='progressbar' style='width:'+ (active_votes.#{ip.p_id}.Yea / (active_votes.#{ip.p_id}.no_vote + active_votes.#{ip.p_id}.Yea + active_votes.#{ip.p_id}.Nay) * 100) + '%')
-                  div(class='progress-bar progress-bar-danger' role='progressbar' style='width:'+ (active_votes.#{ip.p_id}.Nay / (active_votes.#{ip.p_id}.no_vote + active_votes.#{ip.p_id}.Yea + active_votes.#{ip.p_id}.Nay) * 100) + '%')
-                  div(class='progress-bar' role='progressbar' style='background-color: #bbbbbb !important; width:'+ (active_votes.#{ip.p_id}.no_vote / (active_votes.#{ip.p_id}.no_vote + active_votes.#{ip.p_id}.Yea + active_votes.#{ip.p_id}.Nay) * 100) + '%')
+                  div(class='progress-bar progress-bar-success' role='progressbar' style='width:'+ (active_votes.ip.p_id.Yea / (active_votes.ip.p_id.no_vote + active_votes.ip.p_id.Yea + active_votes.ip.p_id.Nay) * 100) + '%')
+                  div(class='progress-bar progress-bar-danger' role='progressbar' style='width:'+ (active_votes.ip.p_id.Nay / (active_votes.ip.p_id.no_vote + active_votes.ip.p_id.Yea + active_votes.ip.p_id.Nay) * 100) + '%')
+                  div(class='progress-bar' role='progressbar' style='background-color: #bbbbbb !important; width:'+ (active_votes.ip.p_id.no_vote / (active_votes.ip.p_id.no_vote + active_votes.ip.p_id.Yea + active_votes.ip.p_id.Nay) * 100) + '%')
                  div(style="display: flex; justify-content: space-around;width: 100%; text-align: justify; -ms-text-justify: distribute-all-lines; text-justify: distribute-all-lines;")
                    div.text-success
-                     | Votes Yea: #{active_votes.#{ip.p_id}.Yea}
-                     #{'(' + (active_votes.#{ip.p_id}.Yea / (active_votes.#{ip.p_id}.no_vote + active_votes.#{ip.p_id}.Yea + active_votes.#{ip.p_id}.Nay) * 100).toFixed(1) + '%)')
+                     | Votes Yea: #{active_votes.ip.p_id.Yea}
+                     #{'(' + (active_votes.ip.p_id.Yea / (active_votes.ip.p_id.no_vote + active_votes.ip.p_id.Yea + active_votes.ip.p_id.Nay) * 100).toFixed(1) + '%)')
                    div.text-danger
-                     | Votes Nay: #{active_votes.#{ip.p_id}.Nay}
-                     #{'(' + (active_votes.#{ip.p_id}.Nay / (active_votes.#{ip.p_id}.no_vote + active_votes.#{ip.p_id}.Yea + active_votes.#{ip.p_id}.Nay) * 100).toFixed(1) + '%)')
+                     | Votes Nay: #{active_votes.ip.p_id.Nay}
+                     #{'(' + (active_votes.ip.p_id.Nay / (active_votes.ip.p_id.no_vote + active_votes.ip.p_id.Yea + active_votes.ip.p_id.Nay) * 100).toFixed(1) + '%)')
                    div
-                     | No Vote: #{active_votes.#{ip.p_id}.no_vote}
-                     #{'(' + (active_votes.#{ip.p_id}..no_vote / (active_votes.#{ip.p_id}.no_vote + active_votes.#{ip.p_id}.Yea + active_votes.#{ip.p_id}.Nay) * 100).toFixed(1) + '%)')
+                     | No Vote: #{active_votes.ip.p_id.no_vote}
+                     #{'(' + (active_votes.ip.p_id..no_vote / (active_votes.ip.p_id.no_vote + active_votes.ip.p_id.Yea + active_votes.ip.p_id.Nay) * 100).toFixed(1) + '%)')
 
     .panel.panel-default
       .panel-heading(style='padding-left:25px;padding-right:25px;')
