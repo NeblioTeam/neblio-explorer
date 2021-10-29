@@ -14,10 +14,9 @@ block content
           each ip in in_progress_proposals
             tr
               td NIP#{ip.p_id}
-              td |
-                #{ip.name}
-                #{ip.desc}
-                #{ip.url}
+              td #{ip.name}
+              | #{ip.desc}
+              | #{ip.url}
     .panel.panel-default
       .panel-heading(style='padding-left:25px;padding-right:25px;')
         strong Upcoming Votes
@@ -30,10 +29,9 @@ block content
           each up in upcoming_proposals
             tr
               td NIP#{up.p_id}
-              td |
-                #{up.name}
-                #{up.desc}
-                #{up.url}
+              td #{up.name}
+              | #{up.desc}
+              | #{up.url}
     .panel.panel-default
       .panel-heading(style='padding-left:25px;padding-right:25px;')
         strong Completed Votes
@@ -46,9 +44,8 @@ block content
           each cp in completed_proposals
             tr
               td NIP#{cp.p_id}
-              td |
-                #{cp.name}
-                #{cp.desc}
-                #{cp.url}
+              td #{cp.name}
+              | #{cp.desc}
+              | #{cp.url}
 
     .footer-padding
