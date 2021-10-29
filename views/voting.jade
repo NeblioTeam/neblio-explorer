@@ -11,6 +11,9 @@ block content
             th Proposal ID
             th Vote Data
         tbody
+          if in_progress_proposals.length == 0
+            tr
+              td None
           each ip in in_progress_proposals
             tr
               td(style="width: 120px")
@@ -26,6 +29,9 @@ block content
             th Proposal ID
             th Vote Data
         tbody
+          if upcoming_proposals.length == 0
+            tr
+              td None
           each up in upcoming_proposals
             tr
               td(style="width: 120px")
@@ -54,6 +60,9 @@ block content
             th Proposal ID
             th Vote Data
         tbody
+          if completed_proposals.length == 0
+            tr
+              td None
           each cp in completed_proposals
             tr
               td(style="width: 120px")
