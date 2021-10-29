@@ -293,7 +293,7 @@ router.get('/voting', function(req, res){
           }
           loop.next();
         });
-        res.render('voting', { active: 'voting', upcoming_proposals: upcoming_proposals, in_progress_proposals: in_progress_proposals, completed_proposals: completed_proposals, active_votes: votes});
+        res.render('voting', { active: 'voting', upcoming_proposals: upcoming_proposals, in_progress_proposals: in_progress_proposals, completed_proposals: completed_proposals, active_votes: active_votes});
       });
     });
   });
