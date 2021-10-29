@@ -269,7 +269,7 @@ router.get('/voting', function(req, res){
 	      lib.syncLoop(votes.length, function (loop) {
 	      	var i = loop.iteration();
 	      	if (!(votes[i]["proposal_id"] in active_votes)) {
-	      		active_votes[votes[i]["proposal_id"] = {}
+	      		active_votes[votes[i]["proposal_id"]] = {}
 	      		active_votes[votes[i]["proposal_id"]]['Yea'] = 0
 	      		active_votes[votes[i]["proposal_id"]]['Nay'] = 0
 	      	}
