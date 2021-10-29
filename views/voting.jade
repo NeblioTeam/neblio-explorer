@@ -33,13 +33,13 @@ block content
               td #{up.name}
                 div.panel-group
                   div.panel
-                  div.panel-heading(style="background-color: #bbbbbb !important;")
-                    div.panel-title(style="font-weight: bold;")
-                      a(href="#collapse#{up.p_id}" data-toggle="collapse") #{up.name}
-                        i.fas.fa-chevron-down
-                  div.pannel-collapse.collapse(id="collapse#{up.p_id}")
-                    div.panel-body
-                      | #{up.desc}
+                    div.panel-heading(style="background-color: #bbbbbb !important;")
+                      div.panel-title(style="font-weight: bold;")
+                        a(href="#collapse#{up.p_id}" data-toggle="collapse") #{up.name}
+                          i.fas.fa-chevron-down
+                    div.pannel-collapse.collapse(id="collapse#{up.p_id}")
+                      div.panel-body
+                        | #{up.desc}
                 div(style="display: flex; justify-content: space-between;width: 100%; text-align: justify; -ms-text-justify: distribute-all-lines; text-justify: distribute-all-lines;")
                   div(style="font-weight: bold;")
                     | Start Block: #{up.start_block}
