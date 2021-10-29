@@ -13,7 +13,8 @@ block content
         tbody
           each ip in in_progress_proposals
             tr
-              td a(href=#{ip.url}) NIP#{ip.p_id}
+              td
+                a(href=#{ip.url}) NIP#{ip.p_id}
               td #{ip.name}
                 | #{ip.desc}
     .panel.panel-default
@@ -27,7 +28,8 @@ block content
         tbody
           each up in upcoming_proposals
             tr
-              td a(href=#{up.url}) NIP#{up.p_id}
+              td
+                a(href=#{up.url}) NIP#{up.p_id}
               td #{up.name}
                 | #{up.desc}
     .panel.panel-default
@@ -41,7 +43,8 @@ block content
         tbody
           each cp in completed_proposals
             tr
-              td a(href=#{cp.url}) NIP#{cp.p_id}
+              td
+                a(href=#{cp.url}) NIP#{cp.p_id}
               td #{cp.name}
                 | #{cp.desc}
 
