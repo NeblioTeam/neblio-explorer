@@ -293,6 +293,9 @@ router.get('/voting', function(req, res){
           }
           loop.next();
         });
+        console.log('VOTING')
+        console.log(votes)
+        console.log(active_votes)
         res.render('voting', { active: 'voting', upcoming_proposals: upcoming_proposals, in_progress_proposals: in_progress_proposals, completed_proposals: completed_proposals, active_votes: active_votes});
       });
     });
