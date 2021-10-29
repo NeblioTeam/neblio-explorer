@@ -26,11 +26,11 @@ block content
             th Proposal ID
             th Vote Data
         tbody
-          each up in completed_proposals
+          each up in upcoming_proposals
             tr
               td(style="width: 120px")
                 a(href=up.url, target='_blank') NIP#{up.p_id}
-              td #{up.name}
+              td
                 div.panel-group
                   div.panel
                     div.panel-heading(style="background-color: #bbbbbb !important;")
