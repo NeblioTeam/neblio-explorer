@@ -66,13 +66,13 @@ block content
                 div(style="display: flex; justify-content: space-around;width: 100%; text-align: justify; -ms-text-justify: distribute-all-lines; text-justify: distribute-all-lines;")
                   div.text-success
                     | Votes Yea: #{active_votes[pid]["Yea"]}
-                    #{'(' + (active_votes[pid]["Yea"] / (active_votes[pid]["no_vote"] + active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100).toFixed(1) + '%)')
+                    | #{'(' + (active_votes[pid]["Yea"] / (active_votes[pid]["no_vote"] + active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100).toFixed(1) + '%)')
                   div.text-danger
                     | Votes Nay: #{active_votes[pid]["Nay"]}
-                    #{'(' + (active_votes[pid]["Nay"] / (active_votes[pid]["no_vote"] + active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100).toFixed(1) + '%)')
+                    | #{'(' + (active_votes[pid]["Nay"] / (active_votes[pid]["no_vote"] + active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100).toFixed(1) + '%)')
                   div
                     | No Vote: #{active_votes[pid]["no_vote"]}
-                    #{'(' + (active_votes[pid]["no_vote"] / (active_votes[pid]["no_vote"] + active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100).toFixed(1) + '%)')
+                    | #{'(' + (active_votes[pid]["no_vote"] / (active_votes[pid]["no_vote"] + active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100).toFixed(1) + '%)')
 
     .panel.panel-default
       .panel-heading(style='padding-left:25px;padding-right:25px;')
