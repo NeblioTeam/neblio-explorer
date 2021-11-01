@@ -93,6 +93,11 @@ block content
             th Votes Nay #{' '}
               span.fas.fa-times-circle
         tbody
+          if (votes.length == 0)
+            tr
+              td None
+              td
+              td
           each val, key in votes
             tr
               td
