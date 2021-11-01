@@ -21,9 +21,6 @@ block content
               td(style="width: 120px")
                 a(href=ip.url, target='_blank') NIP#{ip.p_id}
               td
-                | #{active_votes[pid]["Nay"]}
-                | #{active_votes[pid]["Yea"]}
-                | #{active_votes[pid]["no_vote"]}
                 div.panel-group
                   if (((active_votes[pid]["Nay"] + active_votes[pid]["Yea"]) / (active_votes[pid]["no_vote"] + active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100) >= 20)
                     if ((active_votes[pid]["Yea"] / (active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100) >= 50)
@@ -59,10 +56,10 @@ block content
                     | Start Block: #{ip.start_block}
                   div(style="font-weight: bold;")
                     | End Block: #{ip.end_block}
-                div(class='progress progress-striped active' style="margin-bottom: 0;")
-                  div(class='progress-bar progress-bar-success' role='progressbar' style='width:'+ (active_votes[pid]["Yea"] / (active_votes[pid]["no_vote"] + active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100) + '%')
-                  div(class='progress-bar progress-bar-danger' role='progressbar' style='width:'+ (active_votes[pid]["Nay"] / (active_votes[pid]["no_vote"] + active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100) + '%')
-                  div(class='progress-bar' role='progressbar' style='background-color: #bbbbbb !important; width:'+ (active_votes[pid]["no_vote"] / (active_votes[pid]["no_vote"] + active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100) + '%')
+                div.progress.progress-striped.active(style="margin-bottom: 0;")
+                  div.progress-bar.progress-bar-success(role='progressbar' style='width:'+ (active_votes[pid]["Yea"] / (active_votes[pid]["no_vote"] + active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100) + '%')
+                  div.progress-bar.progress-bar-danger(role='progressbar' style='width:'+ (active_votes[pid]["Nay"] / (active_votes[pid]["no_vote"] + active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100) + '%')
+                  div.progress-bar(role='progressbar' style='background-color: #bbbbbb !important; width:'+ (active_votes[pid]["no_vote"] / (active_votes[pid]["no_vote"] + active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100) + '%')
                  div(style="display: flex; justify-content: space-around;width: 100%; text-align: justify; -ms-text-justify: distribute-all-lines; text-justify: distribute-all-lines;")
                    div.text-success
                      | Votes Yea: #{active_votes[pid]["Yea"]}
@@ -159,10 +156,10 @@ block content
                     | Start Block: #{cp.start_block}
                   div(style="font-weight: bold;")
                     | End Block: #{cp.end_block}
-                div(class='progress progress-striped active' style="margin-bottom: 0;")
-                  div(class='progress-bar progress-bar-success' role='progressbar' style='width:'+ (cp.completed_votes.Yea / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100) + '%')
-                  div(class='progress-bar progress-bar-danger' role='progressbar' style='width:'+ (cp.completed_votes.Nay / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100) + '%')
-                  div(class='progress-bar' role='progressbar' style='background-color: #bbbbbb !important; width:'+ (cp.completed_votes.no_vote / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100) + '%')
+                div.progress.progress-striped.active(style="margin-bottom: 0;")
+                  div.progress-bar.progress-bar-success(role='progressbar' style='width:'+ (cp.completed_votes.Yea / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100) + '%')
+                  div.progress-bar.progress-bar-danger(role='progressbar' style='width:'+ (cp.completed_votes.Nay / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100) + '%')
+                  div.progress-bar(role='progressbar' style='background-color: #bbbbbb !important; width:'+ (cp.completed_votes.no_vote / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100) + '%')
                  div(style="display: flex; justify-content: space-around;width: 100%; text-align: justify; -ms-text-justify: distribute-all-lines; text-justify: distribute-all-lines;")
                    div.text-success
                      | Votes Yea: #{cp.completed_votes.Yea}
