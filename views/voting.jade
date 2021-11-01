@@ -16,7 +16,7 @@ block content
               td None
               td
           each ip in in_progress_proposals
-            - var pid = ip.pid
+            - var pid = ip.p_id
             tr
               td(style="width: 120px")
                 a(href=ip.url, target='_blank') NIP#{ip.p_id}
