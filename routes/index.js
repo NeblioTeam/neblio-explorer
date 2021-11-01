@@ -267,33 +267,58 @@ router.get('/voting', function(req, res){
         last_block = stats["last"]
         // sort our active votes per each proposal
         if (votes && votes.length) {
-          lib.syncLoop(votes.length, function (loop) {
-            var i = loop.iteration();
+          lib.syncLoop(votes.length, function (loop1) {
+            var i = loop1.iteration();
             if (!(votes[i]["proposal_id"] in active_votes)) {
               active_votes[votes[i]["proposal_id"]] = {}
               active_votes[votes[i]["proposal_id"]]['Yea'] = 0
               active_votes[votes[i]["proposal_id"]]['Nay'] = 0
             }
             active_votes[votes[i]["proposal_id"]][votes[i]["vote_value"]] = active_votes[votes[i]["proposal_id"]][votes[i]["vote_value"]] + 1
-            loop.next();
+            loop1.next();
+          }, function() {
+            // sort our proposals based on status
+            lib.syncLoop(proposals.length, function (loop2) {
+              var j = loop2.iteration();
+              if (proposals[j]["status"] == "upcoming") {
+                upcoming_proposals.push(proposals[j])
+                loop2.next();
+              } else if (proposals[j]["status"] == "in_progress") {
+                in_progress_proposals.push(proposals[j])
+                if (votes && votes.length) {
+                  active_votes[proposals[j]["p_id"]]["no_vote"] = last_block - proposals[j]["start_block"] + 1 - active_votes[proposals[j]["p_id"]]["Yea"] - active_votes[proposals[j]["p_id"]]["Nay"]
+                }
+                loop2.next();
+              } else if (proposals[j]["status"] == "completed") {
+                completed_proposals.push(proposals[j])
+                loop2.next();
+              }
+            }, function() {
+              res.render('voting', { active: 'voting', upcoming_proposals: upcoming_proposals, in_progress_proposals: in_progress_proposals, completed_proposals: completed_proposals, active_votes: active_votes});
+            });
+          });
+        } else {
+          // no active votes
+          // sort our proposals based on status
+          lib.syncLoop(proposals.length, function (loop2) {
+            var j = loop2.iteration();
+            if (proposals[j]["status"] == "upcoming") {
+              upcoming_proposals.push(proposals[j])
+              loop2.next();
+            } else if (proposals[j]["status"] == "in_progress") {
+              in_progress_proposals.push(proposals[j])
+              if (votes && votes.length) {
+                active_votes[proposals[j]["p_id"]]["no_vote"] = last_block - proposals[j]["start_block"] + 1 - active_votes[proposals[j]["p_id"]]["Yea"] - active_votes[proposals[j]["p_id"]]["Nay"]
+              }
+              loop2.next();
+            } else if (proposals[j]["status"] == "completed") {
+              completed_proposals.push(proposals[j])
+              loop2.next();
+            }
+          }, function(){
+            res.render('voting', { active: 'voting', upcoming_proposals: upcoming_proposals, in_progress_proposals: in_progress_proposals, completed_proposals: completed_proposals, active_votes: active_votes});
           });
         }
-        // sort our proposals based on status
-        lib.syncLoop(proposals.length, function (loop) {
-          var i = loop.iteration();
-          if (proposals[i]["status"] == "upcoming") {
-            upcoming_proposals.push(proposals[i])
-          } else if (proposals[i]["status"] == "in_progress") {
-            in_progress_proposals.push(proposals[i])
-            if (votes && votes.length) {
-              active_votes[proposals[i]["p_id"]]["no_vote"] = last_block - proposals[i]["start_block"] + 1 - active_votes[proposals[i]["p_id"]]["Yea"] - active_votes[proposals[i]["p_id"]]["Nay"]
-            }
-          } else if (proposals[i]["status"] == "completed") {
-            completed_proposals.push(proposals[i])
-          }
-          loop.next();
-        });
-        res.render('voting', { active: 'voting', upcoming_proposals: upcoming_proposals, in_progress_proposals: in_progress_proposals, completed_proposals: completed_proposals, active_votes: active_votes});
       });
     });
   });
