@@ -93,7 +93,7 @@ block content
             th Votes Nay #{' '}
               span.fas.fa-times-circle
         tbody
-          if (votes.length == 0)
+          - if (Object.getOwnPropertyNames(votes).length === 0)
             tr
               td None
               td
