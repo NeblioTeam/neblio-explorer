@@ -69,13 +69,13 @@ block content
                 div(style="display: flex; justify-content: space-around;width: 100%; text-align: justify; -ms-text-justify: distribute-all-lines; text-justify: distribute-all-lines;")
                   div.text-success
                     | Votes Yea: #{active_votes[pid]["Yea"]}
-                    #{yea_count}
+                    | #{yea_count}
                   div.text-danger
                     | Votes Nay: #{active_votes[pid]["Nay"]}
-                    #{nay_count}
+                    | #{nay_count}
                   div
                     | No Vote: #{active_votes[pid]["no_vote"]}
-                    #{nov_count}
+                    | #{nov_count}
 
     .panel.panel-default
       .panel-heading(style='padding-left:25px;padding-right:25px;')
@@ -163,19 +163,25 @@ block content
                   div(style="font-weight: bold;")
                     | End Block: #{cp.end_block}
                 div.progress.progress-striped.active(style="margin-bottom: 0;")
-                  div.progress-bar.progress-bar-success(role='progressbar' style='width:'+ (cp.completed_votes.Yea / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100) + '%')
-                  div.progress-bar.progress-bar-danger(role='progressbar' style='width:'+ (cp.completed_votes.Nay / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100) + '%')
-                  div.progress-bar(role='progressbar' style='background-color: #bbbbbb !important; width:'+ (cp.completed_votes.no_vote / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100) + '%')
+                  - var yea_width = (cp.completed_votes.Yea / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100) + '%'
+                  - var nay_width = (cp.completed_votes.Nay / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100) + '%'
+                  - var nov_width = (cp.completed_votes.no_vote / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100) + '%'
+                  - var yea_count = '(' + (cp.completed_votes.Yea / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100).toFixed(1) + '%)'
+                  - var nay_count = '(' + (cp.completed_votes.Nay / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100).toFixed(1) + '%)'
+                  - var nov_count = '(' + (cp.completed_votes.no_vote / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100).toFixed(1) + '%)'
+                  div.progress-bar.progress-bar-success(role="progressbar" style="width:#{yea_width}")
+                  div.progress-bar.progress-bar-danger(role="progressbar" style="width:#{nay_width}")
+                  div.progress-bar(role="progressbar" style="background-color: #bbbbbb !important; width:#{nov_width}")
                 div(style="display: flex; justify-content: space-around;width: 100%; text-align: justify; -ms-text-justify: distribute-all-lines; text-justify: distribute-all-lines;")
                   div.text-success
                     | Votes Yea: #{cp.completed_votes.Yea}
-                    #{'(' + (cp.completed_votes.Yea / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100).toFixed(1) + '%)')
+                    | #{yea_count}
                   div.text-danger
                     | Votes Nay: #{cp.completed_votes.Nay}
-                    #{'(' + (cp.completed_votes.Nay / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100).toFixed(1) + '%)')
+                    | #{nay_count}
                   div
                     | No Vote: #{cp.completed_votes.no_vote}
-                    #{'(' + (cp.completed_votes.no_vote / (cp.completed_votes.no_vote + cp.completed_votes.Yea + cp.completed_votes.Nay) * 100).toFixed(1) + '%)')
+                    | #{nov_count}
 
 
     .footer-padding
