@@ -6,7 +6,7 @@ block content
   - var received = address.received / 100000000
     img.qrcode.pull-right.hidden-xs(src='/qr/#{address.a_id}')
   .col-xs-12.col-md-10.col-md-offset-1
-    .panel.panel-default.panel-address-summary
+    .panel.panel-default
       .panel-heading(style='position:relative;')        
         strong #{address.a_id}
         if settings.labels[address.a_id]
@@ -83,7 +83,7 @@ block content
                                   td(style='width:68%') #{t.amount}
     .panel.panel-default.hidden-xs
       .panel-heading
-        strong Block Votes By Address
+        strong Block Vote History
       table.table.table-bordered.table-striped.summary-table
         thead
           tr
