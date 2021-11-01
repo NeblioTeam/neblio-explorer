@@ -16,13 +16,14 @@ block content
               td None
               td
           each ip in in_progress_proposals
+            - var pid = ip.pid
             tr
               td(style="width: 120px")
                 a(href=ip.url, target='_blank') NIP#{ip.p_id}
               td
-                active_votes.ip.p_id.Nay
-                active_votes.ip.p_id.Yea
-                active_votes.ip.p_id.no_vote
+                | #{active_votes[pid]["Nay"]}
+                | #{active_votes[pid]["Yea"]}
+                | #{active_votes[pid]["no_vote"]}
 //                div.panel-group
 //                  if (((active_votes.ip.p_id.Nay + active_votes.ip.p_id.Yea) / (active_votes.ip.p_id.no_vote + active_votes.ip.p_id.Yea + active_votes.ip.p_id.Nay) * 100) >= 20)
 //                    if ((active_votes.ip.p_id.Yea / (active_votes.ip.p_id.Yea + active_votes.ip.p_id.Nay) * 100) >= 50)
