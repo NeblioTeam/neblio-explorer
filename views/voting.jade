@@ -61,8 +61,8 @@ block content
                   - var nay_width = (active_votes[pid]["Nay"] / (active_votes[pid]["no_vote"] + active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100) + '%'
                   - var nov_width = (active_votes[pid]["no_vote"] / (active_votes[pid]["no_vote"] + active_votes[pid]["Yea"] + active_votes[pid]["Nay"]) * 100) + '%'
                   div.progress-bar.progress-bar-success(role="progressbar" style="width:#{yea_width}")
-                  div.progress-bar.progress-bar-danger(role='progressbar' style='width:#{nay_width}")
-                  div.progress-bar(role='progressbar' style='background-color: #bbbbbb !important; width:#{nov_width}")
+                  div.progress-bar.progress-bar-danger(role="progressbar" style="width:#{nay_width}")
+                  div.progress-bar(role="progressbar" style="background-color: #bbbbbb !important; width:#{nov_width}")
                 div(style="display: flex; justify-content: space-around;width: 100%; text-align: justify; -ms-text-justify: distribute-all-lines; text-justify: distribute-all-lines;")
                   div.text-success
                     | Votes Yea: #{active_votes[pid]["Yea"]}
