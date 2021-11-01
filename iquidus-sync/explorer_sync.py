@@ -1327,7 +1327,7 @@ class Daemon(object):
                 status = "unknown"
                 if last_block_height < p["start_block"]:
                     status = "upcoming"
-                elif last_block_height >= p["start_block"] and last_block_height <= p["end_block"]:
+                elif last_block_height >= p["start_block"] and last_block_height <= (p["end_block"] + 20):
                     status = "in_progress"
                 # don't mark as completed until a 20 block buffer is in
                 # This will prevent reorgs from affecting the last few
