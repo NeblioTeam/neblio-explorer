@@ -101,7 +101,7 @@ block content
           each val, key in votes
             tr
               td
-                a(href='/proposals') NIP#{key}
+                a(href='/voting##{key}') NIP#{key}
               td.success #{val['Yea']}
               td.danger #{val['Nay']}
     .panel.panel-default.hidden-xs

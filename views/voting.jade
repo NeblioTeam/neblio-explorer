@@ -19,6 +19,7 @@ block content
             - var pid = ip.p_id
             tr
               td(style="width: 120px")
+                a(id='#{ip.p_id}')
                 a(href=ip.url, target='_blank') NIP#{ip.p_id}
               td
                 div.panel-group
@@ -93,6 +94,7 @@ block content
           each up in upcoming_proposals
             tr
               td(style="width: 120px")
+                a(id='#{up.p_id}')
                 a(href=up.url, target='_blank') NIP#{up.p_id}
               td
                 div.panel-group
@@ -125,6 +127,7 @@ block content
           each cp in completed_proposals
             tr
               td(style="width: 120px")
+                a(id='#{cp.p_id}')
                 a(href=cp.url, target='_blank') NIP#{cp.p_id}
               td
                 div.panel-group

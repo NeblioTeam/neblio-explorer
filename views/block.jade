@@ -82,7 +82,7 @@ block content
           if vote != null
             tr
               td
-                a(href='/proposals') NIP#{vote.proposal_id}
+                a(href='/voting##{vote.proposal_id}') NIP#{vote.proposal_id}
 
               if vote.vote_value == 'Yea'
                 td.success
