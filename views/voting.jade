@@ -74,7 +74,7 @@ block content
                     | Votes Nay: #{active_votes[pid]["Nay"]}
                     | #{nay_count}
                   div
-                    | No Vote: #{active_votes[pid]["no_vote"]}
+                    | Abstained: #{active_votes[pid]["no_vote"]}
                     | #{nov_count}
 
     .panel.panel-default
@@ -136,7 +136,6 @@ block content
                         div.panel-heading
                           div.panel-title(style="font-weight: bold")
                             a(href="#collapse#{cp.p_id}" data-toggle="collapse") #{cp.name}
-                              #{' '}
                               i.fas.fa-chevron-down
                         div.pannel-collapse.collapse(id="collapse#{cp.p_id}")
                           div.panel-body
@@ -182,7 +181,7 @@ block content
                     | Votes Nay: #{cp.completed_votes.Nay}
                     | #{nay_count}
                   div
-                    | No Vote: #{cp.completed_votes.no_vote}
+                    | Abstained: #{cp.completed_votes.no_vote}
                     | #{nov_count}
 
 
