@@ -104,8 +104,6 @@ class Database(object):
 
     def get_stats(self):
         stats = self.db.coinstats.find_one({"coin": self._coin})
-        if stats is None:
-            return None
         return stats
 
     def get_last_recorded_block(self):

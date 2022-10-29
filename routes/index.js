@@ -483,7 +483,7 @@ router.get('/ext/stats', function(req, res) {
 router.get('/ext/summary', function(req, res) {
   lib.get_difficulty(function(difficulty) {
     difficultyHybrid = ''
-    if (difficulty['proof-of-work']) {
+    if (difficulty && difficulty['proof-of-work']) {
             if (settings.index.difficulty == 'Hybrid') {
               difficultyHybrid = 'POS: ' + difficulty['proof-of-stake'];
               difficulty = 'POW: ' + difficulty['proof-of-work'];
@@ -500,6 +500,7 @@ router.get('/ext/summary', function(req, res) {
             lib.get_block(hash1, function(block1) {
               lib.get_blockhash(blockcount-2880, function(hash2) {
                 lib.get_block(hash2, function(block2) {
+                  if (!block1 || !block2) return;
                   var blocktime = (block1.time - block2.time)/2880;
                   db.count_addresses(function(address_count) {
                     db.get_stats(settings.coin, function (stats) {
